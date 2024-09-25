@@ -5,7 +5,7 @@ import { Food, FoodState } from './food.state';
 export interface KnownMeal {
     id: ID;
     date: Date;
-    foodId: ID;
+    foodId: Food['id'];
 }
 
 export interface CustomMeal {
@@ -16,8 +16,14 @@ export interface CustomMeal {
 
 export type Meal = KnownMeal | CustomMeal;
 
+export type FoodOrId = Food | Food['id'];
+
 export function isCustomMeal(meal: Meal): meal is CustomMeal {
     return (meal as CustomMeal).food !== undefined;
+}
+
+export function isFoodOrId(foodOrId: FoodOrId): foodOrId is Food {
+    return (foodOrId as Food)?.id !== undefined;
 }
 
 export class MealState {
@@ -27,21 +33,11 @@ export class MealState {
     ) {
     }
 
-    public addKnownMeal(foodId: ID, date: Date) {
-        const item = {
+    public add(foodOrId: FoodOrId, date: Date) {
+        const item: Meal = {
             id: generateId(),
             date,
-            foodId,
-        };
-
-        this.state = [...this.state, item];
-    }
-
-    public addCustomMeal(food: Food, date: Date) {
-        const item = {
-            id: generateId(),
-            date,
-            food,
+            ...this._foodOrId(foodOrId)
         };
 
         this.state = [...this.state, item];
@@ -59,12 +55,17 @@ export class MealState {
         return this.state.find(meal => meal.id === id);
     }
 
-    public updateKnownMeal(id: ID, foodId: ID) {
-        this.state = this.state.map(meal => meal.id === id ? {...meal, foodId} : meal);
-    }
+    public update(id: ID, foodOrId: FoodOrId) {
+        this.state = this.state.map(meal => {
+            if (meal.id === id) {
+                return {
+                    ...meal,
+                    ...this._foodOrId(foodOrId)
+                };
+            }
 
-    public updateCustomMeal(id: ID, food: Food) {
-        this.state = this.state.map(meal => meal.id === id ? {...meal, food} : meal);
+            return meal;
+        });
     }
 
     public remove(id: ID) {
@@ -77,5 +78,11 @@ export class MealState {
             const result = a.date.getTime() - b.date.getTime();
             return sort === 'asc' ? result : -result;
         });
+    }
+
+    private _foodOrId(foodOrId: FoodOrId) {
+        return {
+            ...(isFoodOrId(foodOrId) ? {food: foodOrId}: {foodId: foodOrId})
+        };
     }
 }
