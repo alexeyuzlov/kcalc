@@ -1,10 +1,10 @@
-import { generateId, ID } from './id';
+import {generateId, ID} from './id';
 
 export enum FoodType {
-    Default = 'default',
-    Mix = 'mix',
-    Order = 'order',
-    Custom = 'custom',
+  Default = 'default',
+  Mix = 'mix',
+  Order = 'order',
+  Custom = 'custom',
 }
 
 export interface Food {

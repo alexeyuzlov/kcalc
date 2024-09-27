@@ -5,35 +5,52 @@
  * @format
  */
 
-import React from 'react';
-import { SafeAreaView, ScrollView, StatusBar, useColorScheme, View, } from 'react-native';
-
-import { Colors, } from 'react-native/Libraries/NewAppScreen';
+import React, {useState} from 'react';
+import {
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  useColorScheme,
+} from 'react-native';
+import {Food} from './domain/food.state.ts';
+import {FoodList} from './components/FoodList.tsx';
+import {FoodEdit} from './components/FoodEdit.tsx';
+import {mockFood} from './domain/mock-food.ts';
 
 function App(): React.JSX.Element {
+  const [foodItems, setFoodItems] = useState<Food[]>(mockFood);
   const isDarkMode = useColorScheme() === 'dark';
+  const [foodEditVisible, setFoodEditVisible] = useState(true);
+  const [foodListVisible, setFoodListVisible] = useState(false);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const saveFood = (food: Food) => {
+    console.info('Adding new food', food);
+    setFoodItems([...foodItems, food]);
+    setFoodListVisible(true);
+    setFoodEditVisible(false);
+  };
+
+  const back = () => {
+    setFoodListVisible(false);
+    setFoodEditVisible(true);
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-        </View>
-      </ScrollView>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+
+      {foodEditVisible && <FoodEdit save={saveFood} />}
+
+      {foodListVisible && <FoodList items={foodItems} closeList={back} />}
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+});
 
 export default App;
