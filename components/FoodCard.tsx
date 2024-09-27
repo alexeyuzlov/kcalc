@@ -3,10 +3,12 @@ import {Button, StyleSheet, Text, View} from 'react-native';
 import {Food} from '../domain/food.state.ts';
 
 type SectionProps = PropsWithChildren<{
+  navigation: any;
   item: Food;
 }>;
 
 export function FoodCard({
+  navigation,
   item,
 }: SectionProps): React.JSX.Element {
   return (
@@ -19,9 +21,7 @@ export function FoodCard({
       <Text>Carbs: {item.carbs}</Text>
 
       <Button
-        onPress={() => {
-          console.log('You tapped the button!');
-        }}
+        onPress={() => navigation.navigate('FoodEdit', {id: item.id, title: 'Food Edit'})}
         title="Edit"
       />
     </View>
