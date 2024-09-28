@@ -1,15 +1,16 @@
 import React, {PropsWithChildren} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
-import {Food} from '../domain/food.state.ts';
+import {Alert, Button, StyleSheet, Text, View} from 'react-native';
+import {Food, FoodType} from '../domain/food.state.ts';
 import {Number} from './Number.tsx';
 import {cardStyles} from '../styles/card.tsx';
+import {generateId} from '../domain/id.ts';
 
 type SectionProps = PropsWithChildren<{
-  navigation: any;
+  navigation?: any;
   item: Food;
   remove?: (id: Food['id']) => void;
   selectable?: boolean;
-  overrideWeight?: number;
+  readonly?: boolean;
 }>;
 
 export function FoodCard({
@@ -17,81 +18,89 @@ export function FoodCard({
   item,
   remove,
   selectable,
-  overrideWeight,
+  readonly,
 }: SectionProps): React.JSX.Element {
-  let result: Food = {...item};
-  const hasOverrideWeight = typeof overrideWeight === 'number';
-
-  if (hasOverrideWeight) {
-    result = {
-      ...item,
-      weight: overrideWeight,
-      kcal: (item.kcal / item.weight) * overrideWeight,
-      protein: (item.protein / item.weight) * overrideWeight,
-      fat: (item.fat / item.weight) * overrideWeight,
-      carbs: (item.carbs / item.weight) * overrideWeight,
-    };
-  }
+  const confirmRemove = () =>
+    Alert.alert('Confirm action', 'Are you sure?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Remove',
+        onPress: () => remove?.(item.id),
+        style: 'destructive',
+      },
+    ]);
 
   return (
     <View style={cardStyles.container}>
-      <Text style={styles.heading}>{result.name}</Text>
+      <Text
+        style={
+          item.type === FoodType.Mix ? styles.headingPrimary : styles.heading
+        }>
+        {item.name}
+      </Text>
 
       <View style={styles.group}>
         <View style={styles.category}>
           <Text style={styles.term}>Weight</Text>
-          <Number value={result.weight}/>
+          <Number value={item.weight} />
         </View>
 
         <View style={styles.category}>
           <Text style={styles.term}>Kcal</Text>
-          <Number value={result.kcal}/>
+          <Number value={item.kcal} />
         </View>
 
         <View style={styles.category}>
           <Text style={styles.term}>Protein</Text>
-          <Number value={result.protein}/>
+          <Number value={item.protein} />
         </View>
 
         <View style={styles.category}>
           <Text style={styles.term}>Fat</Text>
-          <Number value={result.fat}/>
+          <Number value={item.fat} />
         </View>
 
         <View style={styles.category}>
           <Text style={styles.term}>Carbs</Text>
-          <Number value={result.carbs}/>
+          <Number value={item.carbs} />
         </View>
       </View>
 
-      <View style={styles.group}>
-        {selectable && (
-          <Button
-            onPress={() => navigation.navigate('MealEdit', {foodId: result.id})}
-            title="Select"
-          />
-        )}
+      {!readonly && (
+        <View style={styles.group}>
+          {selectable && (
+            <Button
+              onPress={() =>
+                navigation.navigate('MealEdit', {
+                  foodId: item.id,
+                  update: generateId(),
+                })
+              }
+              title="Select"
+            />
+          )}
 
-        {!hasOverrideWeight && (
           <Button
             onPress={() =>
               navigation.navigate('FoodEdit', {
-                id: result.id,
+                id: item.id,
                 title: 'Food Edit',
               })
             }
             title="Edit"
           />
-        )}
 
-        {remove && (
           <Button
+            disabled={!remove}
             color={'#bb0000'}
-            onPress={() => remove(item.id)}
+            onPress={confirmRemove}
             title="Delete"
           />
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -103,7 +112,12 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 24,
-    color: '#333',
+    color: 'black',
+  },
+  headingPrimary: {
+    fontSize: 28,
+    color: '#bb0000',
+    fontWeight: 'bold',
   },
   term: {
     fontWeight: 'bold',
@@ -112,5 +126,5 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 4,
     alignItems: 'center',
-  }
+  },
 });

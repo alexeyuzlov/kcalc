@@ -11,6 +11,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import {Food, FoodType} from '../domain/food.state.ts';
 import {StateContext} from '../State.tsx';
 import {formStyles} from '../styles/form.tsx';
+import {generateId} from '../domain/id.ts';
 
 type SectionProps = PropsWithChildren<{
   route: any;
@@ -87,11 +88,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
     if (food.id) {
       state.foodState.update(food.id, foodEdit);
       // TODO add to database
-      navigation.navigate('FoodList', {update: true});
+      navigation.navigate('FoodList', {update: generateId()});
     } else {
       state.foodState.add(foodEdit);
       // TODO add to database
-      navigation.navigate('FoodList', {update: true});
+      navigation.navigate('FoodList', {update: generateId()});
     }
   };
 

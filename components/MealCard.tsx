@@ -1,5 +1,5 @@
 import React, {PropsWithChildren} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import {Alert, Button, StyleSheet, View} from 'react-native';
 import {Meal} from '../domain/meal.state.ts';
 import {FoodCard} from './FoodCard.tsx';
 import {cardStyles} from '../styles/card.tsx';
@@ -7,7 +7,7 @@ import {cardStyles} from '../styles/card.tsx';
 type SectionProps = PropsWithChildren<{
   navigation: any;
   item: Meal;
-  remove: (id: Meal['id']) => void;
+  remove?: (id: Meal['id']) => void;
 }>;
 
 export function MealCard({
@@ -15,28 +15,36 @@ export function MealCard({
   item,
   remove
 }: SectionProps): React.JSX.Element {
-  const formatDate = item.date.toString();
+  const confirmRemove = () =>
+    Alert.alert('Confirm action', 'Are you sure?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Remove',
+        onPress: () => remove?.(item.id),
+        style: 'destructive',
+      },
+    ]);
 
   return (
     <View style={cardStyles.container}>
-      <Text>{formatDate}</Text>
-
       {item.food && (
-        <FoodCard
-          navigation={navigation}
-          item={item.food}
-          overrideWeight={item.weight}
-        />
+        <FoodCard navigation={navigation} item={item.food} readonly={true} />
       )}
 
       <View style={styles.group}>
         <Button
-          onPress={() => navigation.navigate('MealEdit', {id: item.id, title: 'Meal Edit'})}
+          onPress={() =>
+            navigation.navigate('MealEdit', {id: item.id, title: 'Meal Edit'})
+          }
           title="Edit"
         />
         <Button
           color={'#bb0000'}
-          onPress={() => remove(item.id)}
+          disabled={!remove}
+          onPress={confirmRemove}
           title="Delete"
         />
       </View>

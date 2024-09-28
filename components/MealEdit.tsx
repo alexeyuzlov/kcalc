@@ -12,6 +12,7 @@ import {Meal} from '../domain/meal.state.ts';
 import {formStyles} from '../styles/form.tsx';
 import {Food} from '../domain/food.state.ts';
 import {FoodCard} from './FoodCard.tsx';
+import {generateId} from '../domain/id.ts';
 
 type SectionProps = PropsWithChildren<{
   route: any;
@@ -39,6 +40,16 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
   const [foodId, setFoodId] = useState(meal.foodId);
   const [food, setFood] = useState<Food | undefined>();
 
+  // skip the screen for new meal, but only if there is no food selected
+  useEffect(() => {
+    if (!route.params.id && !route.params.foodId) {
+      navigation.navigate('FoodTab', {
+        screen: 'FoodList',
+        params: {select: generateId()},
+      });
+    }
+  }, [navigation, route.params?.id, route.params?.foodId]);
+
   useEffect(() => {
     setWeightAsNumber(parseFloat(weight!) || 0);
   }, [weight]);
@@ -51,14 +62,14 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
 
   useEffect(() => {
     if (foodId) {
-      const food = state.foodState.find(foodId);
-      setFood(food);
+      const findFood = state.foodState.find(foodId);
+      setFood(findFood);
 
       if (weightAsNumber === 0) {
-        setWeight(food?.weight?.toString());
+        setWeight(findFood?.weight?.toString());
       }
     }
-  }, [foodId, state.foodState]);
+  }, [foodId, weightAsNumber, state.foodState, route.params?.update]);
 
   useEffect(() => {
     const title = route.params?.id ? 'Edit Meal' : 'Add Meal';
@@ -74,11 +85,11 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
     if (meal.id) {
       state.mealState.update(meal.id, mealEdit);
       // TODO add to database
-      navigation.navigate('MealList', {update: true});
+      navigation.navigate('MealList', {update: generateId()});
     } else {
       state.mealState.add(mealEdit);
       // TODO add to database
-      navigation.navigate('MealList', {update: true});
+      navigation.navigate('MealList', {update: generateId()});
     }
   };
 
@@ -99,19 +110,20 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
 
           <View>
             {food && (
-              <FoodCard
-                item={food}
-                navigation={navigation}
-                overrideWeight={weightAsNumber}
-              />
+              <FoodCard item={food} navigation={navigation} readonly={true} />
             )}
           </View>
 
           <View>
-            {!food && (<Text>Food</Text>)}
+            {!food && <Text>Food</Text>}
             <Button
               title={'Select Food'}
-              onPress={() => navigation.navigate('FoodList', {select: true})}
+              onPress={() =>
+                navigation.navigate('FoodTab', {
+                  screen: 'FoodList',
+                  params: {select: generateId()},
+                })
+              }
             />
           </View>
         </View>

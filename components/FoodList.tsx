@@ -1,8 +1,15 @@
 import {Button, FlatList, StyleSheet, TextInput, View} from 'react-native';
-import React, {PropsWithChildren, useContext, useEffect, useState} from 'react';
+import React, {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {FoodCard} from './FoodCard.tsx';
 import {Food} from '../domain/food.state.ts';
 import {StateContext} from '../State.tsx';
+import {formStyles} from '../styles/form.tsx';
 
 type SectionProps = PropsWithChildren<{
   navigation: any;
@@ -11,6 +18,7 @@ type SectionProps = PropsWithChildren<{
 
 export function FoodList({navigation, route}: SectionProps): React.JSX.Element {
   const state = useContext(StateContext);
+  const searchRef = useRef<TextInput>(null);
 
   const [foodItems, setFoodItems] = useState<Food[]>(state.foodState.state);
   const [selectable, setSelectable] = useState(false);
@@ -22,6 +30,10 @@ export function FoodList({navigation, route}: SectionProps): React.JSX.Element {
 
     if (route.params?.select) {
       setSelectable(true);
+
+      setTimeout(() => {
+        searchRef.current?.focus();
+      });
     }
   }, [route.params?.update, route.params?.select, state.foodState.state]);
 
@@ -32,7 +44,7 @@ export function FoodList({navigation, route}: SectionProps): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.search} placeholder="Search" />
+      <TextInput ref={searchRef} style={styles.search} placeholder="Search" />
 
       <FlatList
         style={styles.list}
@@ -43,13 +55,13 @@ export function FoodList({navigation, route}: SectionProps): React.JSX.Element {
           <FoodCard
             item={item}
             navigation={navigation}
-            remove={remove}
+            remove={selectable ? undefined : remove}
             selectable={selectable}
           />
         )}
       />
 
-      <View style={styles.actions}>
+      <View style={formStyles.button}>
         <Button
           title="Add New Food Item"
           onPress={() =>
@@ -65,9 +77,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-  },
-  actions: {
-    margin: 8,
   },
   list: {
     flex: 1,

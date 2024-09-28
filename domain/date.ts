@@ -36,3 +36,41 @@ export function dateRange(date: Date, group: DateGroup): DateRange {
             };
     }
 }
+
+export function printDateRange(value: DateRange): string {
+  if (!value || (!value.gte && !value.lte)) {
+    return '';
+  }
+
+  if (equalDate(value.gte!, value.lte!, 'day')) {
+    return printDate(value.gte!);
+  }
+
+  const from = printDate(value.gte!);
+  const to = printDate(value.lte!);
+
+  return `${from} - ${to}`;
+}
+
+export function printDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+export function equalDate(date1: Date, date2: Date, group: DateGroup): boolean {
+  switch (group) {
+    case 'day':
+      return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
+    case 'week':
+      return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() >= date2.getDate() && date1.getDate() < date2.getDate() + 7;
+    case 'month':
+      return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth();
+    case 'year':
+      return date1.getFullYear() === date2.getFullYear();
+    case 'season':
+      return date1.getFullYear() === date2.getFullYear() && Math.floor(date1.getMonth() / 3) === Math.floor(date2.getMonth() / 3);
+  }
+}
