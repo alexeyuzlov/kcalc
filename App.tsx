@@ -1,26 +1,21 @@
 import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
-import {FoodState, FoodType} from './domain/food.state.ts';
+import {FoodState} from './domain/food.state.ts';
 import {MealState} from './domain/meal.state.ts';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {FoodList} from './components/FoodList.tsx';
 import {FoodEdit} from './components/FoodEdit.tsx';
 import {StateContext} from './State.tsx';
+import {mockFood} from './domain/mock-food.ts';
+import {MealList} from './components/MealList.tsx';
+import {MealEdit} from './components/MealEdit.tsx';
 
 const Stack = createNativeStackNavigator();
 
 const foodState = new FoodState([
-  {
-    id: '1',
-    name: 'Chicken breast',
-    weight: 100,
-    type: FoodType.Default,
-    kcal: 165,
-    protein: 31,
-    fat: 3.6,
-    carbs: 121,
-  },
+  mockFood[0],
+  mockFood[1],
 ]);
 const mealState = new MealState([], foodState);
 
@@ -31,7 +26,16 @@ function App(): React.JSX.Element {
 
       <StateContext.Provider value={{foodState, mealState}}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="FoodList">
+          <Stack.Navigator initialRouteName="MealList">
+            <Stack.Screen
+              name="MealList"
+              component={MealList}
+              options={{title: 'Meal List'}}
+            />
+            <Stack.Screen
+              name="MealEdit"
+              component={MealEdit}
+            />
             <Stack.Screen
               name="FoodList"
               component={FoodList}
@@ -40,7 +44,6 @@ function App(): React.JSX.Element {
             <Stack.Screen
               name="FoodEdit"
               component={FoodEdit}
-              options={({ route }) => ({ title: route.params?.title })}
             />
           </Stack.Navigator>
         </NavigationContainer>

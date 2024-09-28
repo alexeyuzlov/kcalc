@@ -6,10 +6,11 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {PropsWithChildren, useContext, useState} from 'react';
+import React, {PropsWithChildren, useContext, useEffect, useState} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import {Food, FoodType} from '../domain/food.state.ts';
 import {StateContext} from '../State.tsx';
+import {formStyles} from '../styles/form.tsx';
 
 type SectionProps = PropsWithChildren<{
   route: any;
@@ -48,11 +49,21 @@ function toFoodForm(food: Food): FoodForm {
   };
 }
 
+const types = Object.keys(FoodType).map(key => {
+  // @ts-ignore
+  return {label: key, value: FoodType[key]};
+});
+
 export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
   const state = useContext(StateContext);
 
   const exist = state.foodState.find(route.params?.id);
   const [food] = useState(exist ? toFoodForm(exist) : defaultFood);
+
+  useEffect(() => {
+    const title = food.id ? 'Edit Food' : 'Add Food';
+    navigation.setOptions({ title });
+  }, [navigation, food]);
 
   const [name, setName] = useState(food.name);
   const [weight, setWeight] = useState(food.weight);
@@ -62,20 +73,15 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
   const [fat, setFat] = useState(food.fat);
   const [carbs, setCarbs] = useState(food.carbs);
 
-  const types = Object.keys(FoodType).map(key => {
-    // @ts-ignore
-    return {label: key, value: FoodType[key]};
-  });
-
   const handleSubmit = () => {
     const foodEdit = {
       name,
-      weight: parseFloat(weight),
+      weight: parseFloat(weight) || 0,
       type,
       kcal: parseFloat(kcal),
-      protein: parseFloat(protein),
-      fat: parseFloat(fat),
-      carbs: parseFloat(carbs),
+      protein: parseFloat(protein) || 0,
+      fat: parseFloat(fat) || 0,
+      carbs: parseFloat(carbs) || 0,
     };
 
     if (food.id) {
@@ -92,11 +98,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={styles.form}>
+        <View style={formStyles.form}>
           <View>
-            <Text>Name {name}</Text>
+            <Text>Name</Text>
             <TextInput
-              style={styles.input}
+              style={formStyles.input}
               inputMode={'text'}
               value={name}
               onChangeText={setName}
@@ -104,9 +110,9 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
           </View>
 
           <View>
-            <Text>Weight {weight}</Text>
+            <Text>Weight</Text>
             <TextInput
-              style={styles.input}
+              style={formStyles.input}
               inputMode={'numeric'}
               value={weight}
               onChangeText={setWeight}
@@ -115,8 +121,8 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
           </View>
 
           <View>
-            <Text>Type {type}</Text>
-            <View style={styles.input}>
+            <Text>Type</Text>
+            <View style={formStyles.input}>
               <RNPickerSelect
                 value={type}
                 onValueChange={value => setType(value)}
@@ -126,9 +132,9 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
           </View>
 
           <View>
-            <Text>Kcal {kcal}</Text>
+            <Text>Kcal</Text>
             <TextInput
-              style={styles.input}
+              style={formStyles.input}
               inputMode={'numeric'}
               value={kcal}
               onChangeText={setKcal}
@@ -137,9 +143,9 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
           </View>
 
           <View>
-            <Text>Protein {protein}</Text>
+            <Text>Protein</Text>
             <TextInput
-              style={styles.input}
+              style={formStyles.input}
               inputMode={'numeric'}
               value={protein}
               onChangeText={setProtein}
@@ -148,9 +154,9 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
           </View>
 
           <View>
-            <Text>Fat {fat}</Text>
+            <Text>Fat</Text>
             <TextInput
-              style={styles.input}
+              style={formStyles.input}
               inputMode={'numeric'}
               value={fat}
               onChangeText={setFat}
@@ -159,9 +165,9 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
           </View>
 
           <View>
-            <Text>Carbs {carbs}</Text>
+            <Text>Carbs</Text>
             <TextInput
-              style={styles.input}
+              style={formStyles.input}
               inputMode={'numeric'}
               value={carbs}
               onChangeText={setCarbs}
@@ -171,7 +177,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
         </View>
       </ScrollView>
 
-      <View style={styles.button}>
+      <View style={formStyles.button}>
         <Button title={'Save'} onPress={handleSubmit} />
       </View>
     </View>
@@ -182,20 +188,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-  },
-  form: {
-    gap: 10,
-    margin: 10,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    backgroundColor: 'white',
-  },
-  button: {
-    padding: 10,
-    borderColor: 'gray',
-    borderTopWidth: 1,
   },
 });
