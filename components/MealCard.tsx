@@ -1,20 +1,22 @@
 import React, {PropsWithChildren} from 'react';
 import {Alert, Button, StyleSheet, View} from 'react-native';
-import {Meal} from '../domain/meal.state.ts';
+import {Meal} from '../domain/meal.ts';
 import {FoodCard} from './FoodCard.tsx';
 import {cardStyles} from '../styles/card.tsx';
+import {useAppDispatch} from '../domain/hooks.ts';
+import {removeMeal} from '../features/mealSlice.tsx';
 
 type SectionProps = PropsWithChildren<{
   navigation: any;
   item: Meal;
-  remove?: (id: Meal['id']) => void;
 }>;
 
 export function MealCard({
   navigation,
   item,
-  remove
 }: SectionProps): React.JSX.Element {
+  const dispatch = useAppDispatch();
+
   const confirmRemove = () =>
     Alert.alert('Confirm action', 'Are you sure?', [
       {
@@ -23,7 +25,7 @@ export function MealCard({
       },
       {
         text: 'Remove',
-        onPress: () => remove?.(item.id),
+        onPress: () => dispatch(removeMeal(item.id)),
         style: 'destructive',
       },
     ]);
@@ -39,11 +41,10 @@ export function MealCard({
           onPress={() =>
             navigation.navigate('MealEdit', {id: item.id, title: 'Meal Edit'})
           }
-          title="Edit"
+          title="Edit Meal"
         />
         <Button
           color={'#bb0000'}
-          disabled={!remove}
           onPress={confirmRemove}
           title="Delete"
         />

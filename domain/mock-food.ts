@@ -1,4 +1,4 @@
-import {Food, FoodType} from './food.state.ts';
+import {Food, FoodType} from './food.ts';
 import {generateId} from './id.ts';
 
 export const mockFood: Food[] = [

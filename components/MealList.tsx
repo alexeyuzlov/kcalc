@@ -1,39 +1,20 @@
 import {Button, SectionList, StyleSheet, Text, View} from 'react-native';
-import React, {PropsWithChildren, useContext, useEffect, useState} from 'react';
-import {StateContext} from '../State.tsx';
-import {Meal} from '../domain/meal.state.ts';
+import React, {PropsWithChildren} from 'react';
+import {Meal} from '../domain/meal.ts';
 import {MealCard} from './MealCard.tsx';
 import {formStyles} from '../styles/form.tsx';
-import {CalendarMealGroup} from '../domain/calendar.state.ts';
+import {MealGroup} from '../domain/meal-groups.ts';
 import {SectionListData} from 'react-native/Libraries/Lists/SectionList';
 import {Summary} from './Summary.tsx';
+import {useAppSelector} from '../domain/hooks.ts';
+import {getMealGroups} from '../domain/store.ts';
 
 type SectionProps = PropsWithChildren<{
   navigation: any;
-  route: any;
 }>;
 
-export function MealList({navigation, route}: SectionProps): React.JSX.Element {
-  const state = useContext(StateContext);
-
-  const [groups, setGroups] = useState<
-    SectionListData<Meal, CalendarMealGroup>[]
-  >([]);
-
-  useEffect(() => {
-    if (route.params?.update) {
-      setGroups(state.calendarState.group('day'));
-    }
-  }, [route.params?.update, state.calendarState]);
-
-  useEffect(() => {
-    setGroups(state.calendarState.group('day'));
-  }, [state.mealState.state, state.calendarState]);
-
-  const remove = (id: Meal['id']) => {
-    state.mealState.remove(id);
-    setGroups(state.calendarState.group('day'));
-  };
+export function MealList({navigation}: SectionProps): React.JSX.Element {
+  const groups: SectionListData<Meal, MealGroup>[] = useAppSelector(getMealGroups);
 
   return (
     <View style={styles.container}>
@@ -47,7 +28,7 @@ export function MealList({navigation, route}: SectionProps): React.JSX.Element {
           </Text>
         )}
         renderItem={({item}) => (
-          <MealCard item={item} navigation={navigation} remove={remove} />
+          <MealCard item={item} navigation={navigation} />
         )}
         renderSectionFooter={data => <Summary item={data.section} />}
       />

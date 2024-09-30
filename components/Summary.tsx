@@ -1,9 +1,9 @@
 import React, {PropsWithChildren} from 'react';
 import {FoodCard} from './FoodCard.tsx';
-import {CalendarMealGroup, summary} from '../domain/calendar.state.ts';
+import {MealGroup, summary} from '../domain/meal-groups.ts';
 
 type SectionProps = PropsWithChildren<{
-  item: CalendarMealGroup;
+  item: MealGroup;
 }>;
 
 export function Summary({item}: SectionProps): React.JSX.Element {

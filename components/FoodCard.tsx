@@ -1,25 +1,29 @@
 import React, {PropsWithChildren} from 'react';
 import {Alert, Button, StyleSheet, Text, View} from 'react-native';
-import {Food, FoodType} from '../domain/food.state.ts';
+import {Food, FoodType} from '../domain/food.ts';
 import {Number} from './Number.tsx';
 import {cardStyles} from '../styles/card.tsx';
-import {generateId} from '../domain/id.ts';
+import {removeFood} from '../features/foodSlice.tsx';
+import {useAppDispatch} from '../domain/hooks.ts';
+import {ID} from '../domain/id.ts';
 
 type SectionProps = PropsWithChildren<{
   navigation?: any;
   item: Food;
-  remove?: (id: Food['id']) => void;
   selectable?: boolean;
+  select?: (id: ID) => void;
   readonly?: boolean;
 }>;
 
 export function FoodCard({
   navigation,
   item,
-  remove,
   selectable,
+  select,
   readonly,
 }: SectionProps): React.JSX.Element {
+  const dispatch = useAppDispatch();
+
   const confirmRemove = () =>
     Alert.alert('Confirm action', 'Are you sure?', [
       {
@@ -28,7 +32,7 @@ export function FoodCard({
       },
       {
         text: 'Remove',
-        onPress: () => remove?.(item.id),
+        onPress: () => dispatch(removeFood(item.id)),
         style: 'destructive',
       },
     ]);
@@ -73,12 +77,7 @@ export function FoodCard({
         <View style={styles.group}>
           {selectable && (
             <Button
-              onPress={() =>
-                navigation.navigate('MealEdit', {
-                  foodId: item.id,
-                  update: generateId(),
-                })
-              }
+              onPress={() => select?.(item.id)}
               title="Select"
             />
           )}
@@ -93,12 +92,7 @@ export function FoodCard({
             title="Edit"
           />
 
-          <Button
-            disabled={!remove}
-            color={'#bb0000'}
-            onPress={confirmRemove}
-            title="Delete"
-          />
+          <Button color={'#bb0000'} onPress={confirmRemove} title="Delete" />
         </View>
       )}
     </View>

@@ -6,12 +6,13 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {PropsWithChildren, useContext, useEffect, useState} from 'react';
+import React, {PropsWithChildren, useState} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
-import {Food, FoodType} from '../domain/food.state.ts';
-import {StateContext} from '../State.tsx';
+import {Food, FoodType} from '../domain/food.ts';
 import {formStyles} from '../styles/form.tsx';
-import {generateId} from '../domain/id.ts';
+import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
+import {addFood, updateFood} from '../features/foodSlice.tsx';
+import {ID} from '../domain/id.ts';
 
 type SectionProps = PropsWithChildren<{
   route: any;
@@ -56,15 +57,14 @@ const types = Object.keys(FoodType).map(key => {
 });
 
 export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
-  const state = useContext(StateContext);
+  const dispatch = useAppDispatch();
 
-  const exist = state.foodState.find(route.params?.id);
-  const [food] = useState(exist ? toFoodForm(exist) : defaultFood);
+  const exist = useAppSelector(state => {
+    const id: ID | undefined = route.params?.id;
+    return state.food.items.find((item: Food) => item.id === id);
+  });
 
-  useEffect(() => {
-    const title = food.id ? 'Edit Food' : 'Add Food';
-    navigation.setOptions({ title });
-  }, [navigation, food]);
+  const food = exist ? toFoodForm(exist) : defaultFood;
 
   const [name, setName] = useState(food.name);
   const [weight, setWeight] = useState(food.weight);
@@ -86,13 +86,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
     };
 
     if (food.id) {
-      state.foodState.update(food.id, foodEdit);
-      // TODO add to database
-      navigation.navigate('FoodList', {update: generateId()});
+      dispatch(updateFood({id: food.id, body: foodEdit}));
+      navigation.navigate('FoodList');
     } else {
-      state.foodState.add(foodEdit);
-      // TODO add to database
-      navigation.navigate('FoodList', {update: generateId()});
+      dispatch(addFood(foodEdit));
+      navigation.navigate('FoodList');
     }
   };
 

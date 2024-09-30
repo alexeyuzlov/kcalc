@@ -1,5 +1,7 @@
 export type DateGroup = 'day' | 'week' | 'month' | 'year' | 'season';
 
+export type ISODate = string;
+
 export interface DateRange {
     gte: Date;
     lte: Date;
