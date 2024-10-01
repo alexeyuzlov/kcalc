@@ -1,10 +1,10 @@
-import React, {PropsWithChildren} from 'react';
-import {Alert, Button, StyleSheet, View} from 'react-native';
-import {Meal} from '../domain/meal.ts';
-import {FoodCard} from './FoodCard.tsx';
-import {cardStyles} from '../styles/card.tsx';
-import {useAppDispatch} from '../domain/hooks.ts';
-import {removeMeal} from '../features/mealSlice.tsx';
+import React, { PropsWithChildren } from 'react';
+import { Alert, Button, StyleSheet, View } from 'react-native';
+import { Meal } from '../domain/meal.ts';
+import { FoodCard } from './FoodCard.tsx';
+import { cardStyles } from '../styles/card.tsx';
+import { useAppDispatch } from '../domain/hooks.ts';
+import { removeMeal } from '../features/mealSlice.tsx';
 
 type SectionProps = PropsWithChildren<{
   navigation: any;
@@ -30,11 +30,20 @@ export function MealCard({
       },
     ]);
 
+  const items = item.items.map((foodWeighted) => {
+    return (
+        foodWeighted.food ? <FoodCard
+            key={foodWeighted.foodId}
+            navigation={navigation}
+            item={foodWeighted.food}
+            readonly={true}
+        /> : null
+    );
+  });
+
   return (
     <View style={cardStyles.container}>
-      {item.food && (
-        <FoodCard navigation={navigation} item={item.food} readonly={true} />
-      )}
+      {items}
 
       <View style={styles.group}>
         <Button

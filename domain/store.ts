@@ -2,6 +2,7 @@ import {configureStore, createSelector} from '@reduxjs/toolkit';
 import foodReducer from '../features/foodSlice';
 import mealReducer from '../features/mealSlice';
 import {mealGroups} from './meal-groups.ts';
+import { ID } from './id.ts';
 
 export const store = configureStore({
   reducer: {
@@ -20,4 +21,19 @@ export const food = (state: RootState) => state.food.items;
 
 export const getMealGroups = createSelector([meal, food], (meal, food) => {
   return mealGroups(meal, food);
+});
+
+export const findMealById = (id: ID) => createSelector([meal, food], (meal, food) => {
+  const item = meal.find(meal => meal.id === id);
+  if (!item) {
+    return;
+  }
+
+  return {
+    ...item,
+    items: item.items.map(item => ({
+      ...item,
+      food: food.find(food => food.id === item.foodId),
+    })),
+  };
 });

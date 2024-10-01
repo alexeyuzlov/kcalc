@@ -1,19 +1,12 @@
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import React, {PropsWithChildren, useEffect, useState} from 'react';
-import {Meal} from '../domain/meal.ts';
-import {formStyles} from '../styles/form.tsx';
-import {FoodCard} from './FoodCard.tsx';
-import {generateId} from '../domain/id.ts';
-import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
-import {addMeal, findMealById, updateMeal} from '../features/mealSlice.tsx';
-import {Food, foodWeighted} from '../domain/food.ts';
+import { Button, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native';
+import React, { PropsWithChildren, useEffect } from 'react';
+import { Meal } from '../domain/meal.ts';
+import { formStyles } from '../styles/form.tsx';
+import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
+import { FieldArray, Formik } from 'formik';
+import * as Yup from 'yup';
+import { findMealById } from '../domain/store.ts';
+import { Field } from './Field.tsx';
 
 type SectionProps = PropsWithChildren<{
   route: any;
@@ -22,54 +15,48 @@ type SectionProps = PropsWithChildren<{
 
 type MealForm = {
   id?: string;
-  weight: string;
-  foodId: string;
+  items: Array<{
+    weight: string;
+    foodId: string;
+  }>;
 };
 
 const defaultMeal: MealForm = {
-  weight: '',
-  foodId: '',
+  items: [
+    {
+      weight: '',
+      foodId: '',
+    }
+  ],
 };
 
 function toMealForm(meal: Meal): MealForm {
   return {
     ...meal,
-    weight: meal.weight.toString(),
-    foodId: meal.foodId,
+    items: meal.items.map(i => ({
+      weight: i.weight.toString(),
+      foodId: i.foodId,
+    })),
   };
 }
+
+const MealSchema = Yup.object().shape({
+  items: Yup.array().of(
+      Yup.object().shape({
+        weight: Yup.number().required().min(0).max(1000).positive(),
+        foodId: Yup.string().required(),
+      }),
+  ),
+});
 
 export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
   const dispatch = useAppDispatch();
 
-  const exist = useAppSelector(state => findMealById(state, route.params?.id));
+  const foodState = useAppSelector(state => state.food.items);
+
+  const exist = useAppSelector(findMealById(route.params?.id));
+
   const meal: MealForm = exist ? toMealForm(exist) : defaultMeal;
-
-  const _food = useAppSelector(state => {
-    const foodId = route.params.foodId || meal.foodId;
-    return state.food.items.find(f => f.id === foodId);
-  });
-
-  const [weight, setWeight] = useState(meal.weight.toString());
-  const [foodId, setFoodId] = useState(meal.foodId);
-
-  const [food, setFood] = useState<Food | undefined>();
-
-  const [weightTouched, setWeightTouched] = useState(false);
-
-  useEffect(() => {
-    if (!_food) {
-      return;
-    }
-
-    if (!weightTouched) {
-      setWeight(_food.weight.toString());
-      setWeightTouched(true);
-    }
-
-    setFood(foodWeighted(_food, parseFloat(weight) || 0));
-  }, [_food, weight, weightTouched]);
-
   // skip the screen for new meal, but only if there is no food selected
   // useEffect(() => {
   //   if (!route.params.id && !route.params.foodId) {
@@ -80,9 +67,22 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
   //   }
   // }, [navigation, route.params?.id, route.params?.foodId]);
 
+  // TODO replace with Modal
   useEffect(() => {
     if (route.params?.foodId) {
-      setFoodId(route.params?.foodId);
+      const food = foodState.find(f => f.id === route.params.foodId);
+      if (!food) {
+        return;
+      }
+
+      // add to formik items
+      // meal.items.push({
+      //   weight: food.weight,
+      //   foodId: food.id,
+      //   food,
+      // });
+      // copilot
+
     }
   }, [route.params?.foodId]);
 
@@ -91,66 +91,92 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
     navigation.setOptions({title});
   }, [route.params?.id, navigation]);
 
-  const changeWeightText = (text: string) => {
-    setWeightTouched(true);
-    setWeight(text);
-  };
+  const selectFood = (setFieldValue: (field: string, value: any) => void, values: MealForm, errors: any) => {
+    console.info(errors);
+    return;
 
-  const handleSubmit = () => {
-    const mealEdit = {
-      weight: parseFloat(weight) || 0,
-      foodId: foodId!,
-    };
+    // add item to array of meal form items
+    setFieldValue('items', [
+      ...values.items,
+      {
+        weight: '',
+        foodId: '',
+      }
+    ]);
 
-    if (meal.id) {
-      dispatch(updateMeal({id: meal.id, body: mealEdit}));
-      navigation.navigate('MealList');
-    } else {
-      dispatch(addMeal(mealEdit));
-      navigation.navigate('MealList');
-    }
+    // navigation.navigate('FoodTab', {
+    //   screen: 'FoodList',
+    //   // todo select is not necessary
+    //   params: {select: generateId(), mealId: meal.id},
+    // });
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <View style={formStyles.form}>
-          <View>
-            <Text>Weight {weight}</Text>
-            <TextInput
-              style={formStyles.input}
-              inputMode={'numeric'}
-              value={weight}
-              onChangeText={changeWeightText}
-              placeholder={'0'}
-            />
-          </View>
+      <Formik
+          initialValues={meal}
+          validationSchema={MealSchema}
+          onSubmit={values => {
+            console.info(MealSchema.cast(values));
+            // const mealEdit = MealSchema.cast(values);
+            //
+            // if (meal.id) {
+            //   dispatch(updateMeal({id: meal.id, body: mealEdit}));
+            //   navigation.navigate('MealList');
+            // } else {
+            //   dispatch(addMeal(mealEdit));
+            //   navigation.navigate('MealList');
+            // }
+          }}
+      >
+        {({setFieldValue, errors, touched, handleChange, handleBlur, handleSubmit, values}) => (
+            <View style={styles.container}>
+              <ScrollView>
+                <View style={formStyles.form}>
+                  <FieldArray
+                      name={'items'}
+                      render={arrayHelpers =>
+                          values.items.map((foodItem, index) => (
+                              <View key={index}>
+                                <Text>Food Id {foodItem.foodId}</Text>
 
-          <View>
-            {food && (
-              <FoodCard item={food} navigation={navigation} readonly={true} />
-            )}
-          </View>
+                                {/*<View>*/}
+                                {/*  {foodItem && (*/}
+                                {/*      <FoodCard item={food} navigation={navigation} readonly={true} />*/}
+                                {/*  )}*/}
+                                {/*</View>*/}
 
-          <View>
-            {!food && <Text>Food</Text>}
-            <Button
-              title={'Select Food'}
-              onPress={() =>
-                navigation.navigate('FoodTab', {
-                  screen: 'FoodList',
-                  params: {select: generateId(), mealId: meal.id},
-                })
-              }
-            />
-          </View>
-        </View>
-      </ScrollView>
+                                <Field label={'Weight'} errors={errors.items?.[index]?.weight}>
+                                  <TextInput
+                                      style={formStyles.input}
+                                      inputMode={'numeric'}
+                                      value={values.items[index].weight}
+                                      onChangeText={handleChange(`items[${index}].weight`)}
+                                      onBlur={handleBlur(`items[${index}].weight`)}
+                                      placeholder={'0'}
+                                  />
+                                </Field>
 
-      <View style={formStyles.button}>
-        <Button title={'Save'} onPress={handleSubmit} />
-      </View>
-    </View>
+                                <Button
+                                    title={'Remove'}
+                                    onPress={() => arrayHelpers.remove(index)}
+                                />
+                              </View>
+                          ))
+                      }
+                  />
+                </View>
+              </ScrollView>
+
+              <View style={formStyles.button}>
+                <Button title={'Select Food'} onPress={() => selectFood(setFieldValue, values, errors)}/>
+              </View>
+
+              <View style={formStyles.button}>
+                <Button style={formStyles.button} title={'Save'} onPress={handleSubmit}/>
+              </View>
+            </View>
+        )}
+      </Formik>
   );
 }
 

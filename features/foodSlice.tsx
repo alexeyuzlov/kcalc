@@ -1,7 +1,8 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {Food} from '../domain/food.ts';
-import {generateId, ID} from '../domain/id.ts';
-import {mockFood} from '../domain/mock-food.ts';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Food } from '../domain/food.ts';
+import { generateId, ID } from '../domain/id.ts';
+import { mockFood } from '../domain/mock-food.ts';
+import { RootState } from '../domain/store.ts';
 
 export interface FoodState {
   items: Food[];
@@ -37,5 +38,8 @@ export const foodSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {addFood, updateFood, removeFood} = foodSlice.actions;
+
+export const findFoodById = (state: RootState, id?: ID) =>
+    state.food.items.find(food => food.id === id);
 
 export default foodSlice.reducer;

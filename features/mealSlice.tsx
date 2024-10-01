@@ -1,8 +1,8 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {Food} from '../domain/food.ts';
-import {generateId, ID} from '../domain/id.ts';
-import {Meal} from '../domain/meal.ts';
-import {RootState} from '../domain/store.ts';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { generateId, ID } from '../domain/id.ts';
+import { Meal } from '../domain/meal.ts';
+import { RootState } from '../domain/store.ts';
+import { mockFood } from '../domain/mock-food.ts';
 
 export interface MealState {
   items: Meal[];
@@ -10,24 +10,40 @@ export interface MealState {
 
 const initialState: MealState = {
   items: [
-    // {
-    //   id: '1',
-    //   date: new Date('2021-01-01').toISOString(),
-    //   weight: 150,
-    //   foodId: mockFood[0].id,
-    // },
-    // {
-    //   id: '3',
-    //   date: new Date('2021-01-02').toISOString(),
-    //   weight: 200,
-    //   foodId: mockFood[0].id,
-    // },
-    // {
-    //   id: '4',
-    //   date: new Date('2021-01-02').toISOString(),
-    //   weight: 200,
-    //   foodId: mockFood[1].id,
-    // },
+    {
+      id: '1',
+      date: new Date('2021-01-03').toISOString(),
+      items: [
+        {
+          foodId: mockFood[0].id,
+          weight: 150,
+        },
+        {
+          foodId: mockFood[1].id,
+          weight: 200,
+        }
+      ]
+    },
+    {
+      id: '3',
+      date: new Date('2021-01-03').toISOString(),
+      items: [
+        {
+          foodId: mockFood[0].id,
+          weight: 150,
+        },
+      ]
+    },
+    {
+      id: '4',
+      date: new Date('2021-01-02').toISOString(),
+      items: [
+        {
+          weight: 200,
+          foodId: mockFood[1].id,
+        }
+      ]
+    },
   ],
 };
 
@@ -49,7 +65,7 @@ export const mealSlice = createSlice({
     },
     updateMeal: (
       state: MealState,
-      action: PayloadAction<{id: ID; body: Partial<Food>}>,
+      action: PayloadAction<{ id: ID; body: Partial<Meal> }>,
     ) => {
       state.items = state.items.map(item =>
         item.id === action.payload.id
@@ -58,16 +74,12 @@ export const mealSlice = createSlice({
       );
     },
     removeMeal: (state: MealState, action: PayloadAction<ID>) => {
-      state.items = state.items.filter(food => food.id !== action.payload);
+      state.items = state.items.filter(item => item.id !== action.payload);
     },
   },
 });
 
 // Action creators are generated for each case reducer function
 export const {addMeal, updateMeal, removeMeal} = mealSlice.actions;
-
-// selector to find single meal by id
-export const findMealById = (state: RootState, id?: ID) =>
-  state.meal.items.find(meal => meal.id === id);
 
 export default mealSlice.reducer;

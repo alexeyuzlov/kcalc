@@ -1,11 +1,15 @@
-import {ID} from './id';
-import {Food} from './food.ts';
-import {ISODate} from './date.ts';
+import { ID } from './id';
+import { ISODate } from './date.ts';
+import { Food } from './food.ts';
+
+export type FoodWeighted = {
+  weight: number;
+  foodId: ID;
+  food?: Food;
+}
 
 export interface Meal {
   id: ID;
   date: ISODate;
-  weight: number;
-  foodId: Food['id'];
-  food?: Food;
+  items: FoodWeighted[];
 }

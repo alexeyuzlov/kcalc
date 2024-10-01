@@ -4,10 +4,9 @@ import RNPickerSelect from 'react-native-picker-select';
 import { Food, FoodType } from '../domain/food.ts';
 import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
-import { ID } from '../domain/id.ts';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { addFood, updateFood } from '../features/foodSlice.tsx';
+import { addFood, findFoodById, updateFood } from '../features/foodSlice.tsx';
 import { Field } from './Field.tsx';
 
 type SectionProps = PropsWithChildren<{
@@ -68,11 +67,7 @@ const types = Object.keys(FoodType).map(key => {
 export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
     const dispatch = useAppDispatch();
 
-    const exist = useAppSelector(state => {
-        const id: ID | undefined = route.params?.id;
-        return state.food.items.find((item: Food) => item.id === id);
-    });
-
+    const exist = useAppSelector(state => findFoodById(state, route.params?.id));
     const food = exist ? toFoodForm(exist) : defaultFood;
 
     return (
@@ -95,7 +90,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                 <View style={styles.container}>
                     <ScrollView>
                         <View style={formStyles.form}>
-                            <Field label={'Name'} name={'name'} errors={errors}>
+                            <Field label={'Name'} errors={errors.name}>
                                 <TextInput
                                     style={formStyles.input}
                                     value={values.name}
@@ -104,7 +99,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Weight'} name={'weight'} errors={errors}>
+                            <Field label={'Weight'} errors={errors.weight}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -115,7 +110,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Type'} name={'type'} errors={errors}>
+                            <Field label={'Type'} errors={errors.type}>
                                 <View style={formStyles.select}>
                                     <RNPickerSelect
                                         value={values.type}
@@ -126,7 +121,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 </View>
                             </Field>
 
-                            <Field label={'Kcal'} name={'kcal'} errors={errors}>
+                            <Field label={'Kcal'} errors={errors.kcal}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -137,7 +132,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Protein'} name={'protein'} errors={errors}>
+                            <Field label={'Protein'} errors={errors.protein}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -148,7 +143,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Fat'} name={'fat'} errors={errors}>
+                            <Field label={'Fat'} errors={errors.fat}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -159,7 +154,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Carbs'} name={'carbs'} errors={errors}>
+                            <Field label={'Carbs'} errors={errors.carbs}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
