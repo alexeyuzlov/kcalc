@@ -58,12 +58,6 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
   const [weightTouched, setWeightTouched] = useState(false);
 
   useEffect(() => {
-    if (route.params?.foodWeight) {
-      setWeight(route.params.foodWeight);
-    }
-  }, [route.params?.foodWeight]);
-
-  useEffect(() => {
     if (!_food) {
       return;
     }
@@ -77,14 +71,14 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
   }, [_food, weight, weightTouched]);
 
   // skip the screen for new meal, but only if there is no food selected
-  useEffect(() => {
-    if (!route.params.id && !route.params.foodId) {
-      navigation.navigate('FoodTab', {
-        screen: 'FoodList',
-        params: {select: generateId()},
-      });
-    }
-  }, [navigation, route.params?.id, route.params?.foodId]);
+  // useEffect(() => {
+  //   if (!route.params.id && !route.params.foodId) {
+  //     navigation.navigate('FoodTab', {
+  //       screen: 'FoodList',
+  //       params: {select: generateId()},
+  //     });
+  //   }
+  // }, [navigation, route.params?.id, route.params?.foodId]);
 
   useEffect(() => {
     if (route.params?.foodId) {
