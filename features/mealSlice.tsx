@@ -53,11 +53,10 @@ export const mealSlice = createSlice({
   reducers: {
     addMeal: (
       state: MealState,
-      action: PayloadAction<Omit<Meal, 'id' | 'date'>>,
+      action: PayloadAction<Omit<Meal, 'id'>>,
     ) => {
       const item: Meal = {
         id: generateId(),
-        date: new Date().toISOString(),
         ...action.payload,
       };
 

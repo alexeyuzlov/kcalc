@@ -1,12 +1,17 @@
 import { Button, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native';
 import React, { PropsWithChildren, useEffect } from 'react';
-import { Meal } from '../domain/meal.ts';
+import { FoodWeighted, Meal } from '../domain/meal.ts';
 import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { FieldArray, Formik } from 'formik';
 import * as Yup from 'yup';
 import { findMealById } from '../domain/store.ts';
 import { Field } from './Field.tsx';
+import DatePicker from 'react-native-date-picker';
+import { addMeal, updateMeal } from '../features/mealSlice.tsx';
+import { FoodCard } from './FoodCard.tsx';
+import { ID } from '../domain/id.ts';
+import { foodWeighted } from '../domain/food.ts';
 
 type SectionProps = PropsWithChildren<{
   route: any;
@@ -15,6 +20,7 @@ type SectionProps = PropsWithChildren<{
 
 type MealForm = {
   id?: string;
+  date: Date;
   items: Array<{
     weight: string;
     foodId: string;
@@ -22,6 +28,7 @@ type MealForm = {
 };
 
 const defaultMeal: MealForm = {
+  date: new Date(),
   items: [
     {
       weight: '',
@@ -33,6 +40,7 @@ const defaultMeal: MealForm = {
 function toMealForm(meal: Meal): MealForm {
   return {
     ...meal,
+    date: new Date(meal.date),
     items: meal.items.map(i => ({
       weight: i.weight.toString(),
       foodId: i.foodId,
@@ -41,6 +49,7 @@ function toMealForm(meal: Meal): MealForm {
 }
 
 const MealSchema = Yup.object().shape({
+  date: Yup.date().required(),
   items: Yup.array().of(
       Yup.object().shape({
         weight: Yup.number().required().min(0).max(1000).positive(),
@@ -92,17 +101,14 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
   }, [route.params?.id, navigation]);
 
   const selectFood = (setFieldValue: (field: string, value: any) => void, values: MealForm, errors: any) => {
-    console.info(errors);
-    return;
-
     // add item to array of meal form items
-    setFieldValue('items', [
-      ...values.items,
-      {
-        weight: '',
-        foodId: '',
-      }
-    ]);
+    // setFieldValue('items', [
+    //   ...values.items,
+    //   {
+    //     weight: '',
+    //     foodId: '',
+    //   }
+    // ]);
 
     // navigation.navigate('FoodTab', {
     //   screen: 'FoodList',
@@ -111,21 +117,38 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
     // });
   };
 
+  const foodCard = (fw: { weight: string; foodId: ID }) => {
+    const food = foodState.find(f => f.id === fw.foodId);
+    if (!food) {
+      return;
+    }
+
+    const result = foodWeighted(food, parseFloat(fw.weight) || 0);
+    return (
+        <FoodCard item={result} navigation={navigation} readonly={true}/>
+    );
+  };
+
   return (
       <Formik
           initialValues={meal}
           validationSchema={MealSchema}
           onSubmit={values => {
             console.info(MealSchema.cast(values));
-            // const mealEdit = MealSchema.cast(values);
-            //
-            // if (meal.id) {
-            //   dispatch(updateMeal({id: meal.id, body: mealEdit}));
-            //   navigation.navigate('MealList');
-            // } else {
-            //   dispatch(addMeal(mealEdit));
-            //   navigation.navigate('MealList');
-            // }
+            const cast = MealSchema.cast(values);
+            const mealEdit = {
+              ...cast,
+              date: cast.date.toISOString(),
+              items: cast.items!
+            };
+
+            if (meal.id) {
+              dispatch(updateMeal({id: meal.id, body: mealEdit}));
+              navigation.navigate('MealList');
+            } else {
+              dispatch(addMeal(mealEdit));
+              navigation.navigate('MealList');
+            }
           }}
       >
         {({setFieldValue, errors, touched, handleChange, handleBlur, handleSubmit, values}) => (
@@ -139,22 +162,23 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
                               <View key={index}>
                                 <Text>Food Id {foodItem.foodId}</Text>
 
-                                {/*<View>*/}
-                                {/*  {foodItem && (*/}
-                                {/*      <FoodCard item={food} navigation={navigation} readonly={true} />*/}
-                                {/*  )}*/}
-                                {/*</View>*/}
-
-                                <Field label={'Weight'} errors={errors.items?.[index]?.weight}>
+                                <Field
+                                    label={'Weight'}
+                                    errors={errors.items?.[index]?.weight}
+                                    touched={touched.items?.[index]?.weight}
+                                >
                                   <TextInput
                                       style={formStyles.input}
                                       inputMode={'numeric'}
+                                      maxLength={4}
                                       value={values.items[index].weight}
                                       onChangeText={handleChange(`items[${index}].weight`)}
                                       onBlur={handleBlur(`items[${index}].weight`)}
                                       placeholder={'0'}
                                   />
                                 </Field>
+
+                                {foodCard(foodItem)}
 
                                 <Button
                                     title={'Remove'}
@@ -164,6 +188,17 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
                           ))
                       }
                   />
+
+                  <Field
+                      label={'Date ' + values.date.toISOString()}
+                      errors={errors.date}
+                      touched={touched.date}
+                  >
+                    <DatePicker
+                        date={values.date}
+                        onDateChange={(date) => setFieldValue('date', date)}
+                    />
+                  </Field>
                 </View>
               </ScrollView>
 

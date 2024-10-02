@@ -90,7 +90,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                 <View style={styles.container}>
                     <ScrollView>
                         <View style={formStyles.form}>
-                            <Field label={'Name'} errors={errors.name}>
+                            <Field label={'Name'} errors={errors.name} touched={touched.name}>
                                 <TextInput
                                     style={formStyles.input}
                                     value={values.name}
@@ -99,10 +99,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Weight'} errors={errors.weight}>
+                            <Field label={'Weight'} errors={errors.weight} touched={touched.weight}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
+                                    maxLength={4}
                                     value={values.weight}
                                     onChangeText={handleChange('weight')}
                                     onBlur={handleBlur('weight')}
@@ -110,7 +111,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Type'} errors={errors.type}>
+                            <Field label={'Type'} errors={errors.type} touched={touched.type}>
                                 <View style={formStyles.select}>
                                     <RNPickerSelect
                                         value={values.type}
@@ -121,10 +122,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 </View>
                             </Field>
 
-                            <Field label={'Kcal'} errors={errors.kcal}>
+                            <Field label={'Kcal'} errors={errors.kcal} touched={touched.kcal}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
+                                    maxLength={4}
                                     value={values.kcal}
                                     onChangeText={handleChange('kcal')}
                                     onBlur={handleBlur('kcal')}
@@ -132,10 +134,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Protein'} errors={errors.protein}>
+                            <Field label={'Protein'} errors={errors.protein} touched={touched.protein}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
+                                    maxLength={4}
                                     value={values.protein}
                                     onChangeText={handleChange('protein')}
                                     onBlur={handleBlur('protein')}
@@ -143,10 +146,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Fat'} errors={errors.fat}>
+                            <Field label={'Fat'} errors={errors.fat} touched={touched.fat}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
+                                    maxLength={4}
                                     value={values.fat}
                                     onChangeText={handleChange('fat')}
                                     onBlur={handleBlur('fat')}
@@ -154,10 +158,11 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Carbs'} errors={errors.carbs}>
+                            <Field label={'Carbs'} errors={errors.carbs} touched={touched.carbs}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
+                                    maxLength={4}
                                     value={values.carbs}
                                     onChangeText={handleChange('carbs')}
                                     onBlur={handleBlur('carbs')}
