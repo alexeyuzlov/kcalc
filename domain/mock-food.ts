@@ -1,5 +1,5 @@
-import {Food, FoodType} from './food.ts';
-import {generateId} from './id.ts';
+import { Food } from './food.ts';
+import { generateId } from './id.ts';
 
 export const mockFood: Food[] = [
   {
@@ -9,7 +9,6 @@ export const mockFood: Food[] = [
     protein: 20,
     carbs: 30,
     kcal: 400,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -19,7 +18,6 @@ export const mockFood: Food[] = [
     protein: 1,
     carbs: 10,
     kcal: 50,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -29,7 +27,6 @@ export const mockFood: Food[] = [
     protein: 30,
     carbs: 0,
     kcal: 200,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -39,7 +36,6 @@ export const mockFood: Food[] = [
     protein: 10,
     carbs: 50,
     kcal: 300,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -49,7 +45,6 @@ export const mockFood: Food[] = [
     protein: 1,
     carbs: 20,
     kcal: 100,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -59,7 +54,6 @@ export const mockFood: Food[] = [
     protein: 40,
     carbs: 0,
     kcal: 300,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -69,7 +63,6 @@ export const mockFood: Food[] = [
     protein: 5,
     carbs: 50,
     kcal: 200,
-    type: FoodType.Mix,
     weight: 100,
   },
   {
@@ -79,7 +72,6 @@ export const mockFood: Food[] = [
     protein: 1,
     carbs: 10,
     kcal: 50,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -89,7 +81,6 @@ export const mockFood: Food[] = [
     protein: 30,
     carbs: 0,
     kcal: 250,
-    type: FoodType.Default,
     weight: 100,
   },
   {
@@ -99,7 +90,6 @@ export const mockFood: Food[] = [
     protein: 10,
     carbs: 50,
     kcal: 300,
-    type: FoodType.Mix,
     weight: 100,
   },
 ];

@@ -1,10 +1,9 @@
 import { Button, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native';
-import React, { PropsWithChildren, useEffect } from 'react';
-import { FoodWeighted, Meal } from '../domain/meal.ts';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
+import { defaultMeal, MealForm, MealSchema, toMealForm } from '../domain/meal.ts';
 import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { FieldArray, Formik } from 'formik';
-import * as Yup from 'yup';
 import { findMealById } from '../domain/store.ts';
 import { Field } from './Field.tsx';
 import DatePicker from 'react-native-date-picker';
@@ -18,54 +17,16 @@ type SectionProps = PropsWithChildren<{
   navigation: any;
 }>;
 
-type MealForm = {
-  id?: string;
-  date: Date;
-  items: Array<{
-    weight: string;
-    foodId: string;
-  }>;
-};
-
-const defaultMeal: MealForm = {
-  date: new Date(),
-  items: [
-    {
-      weight: '',
-      foodId: '',
-    }
-  ],
-};
-
-function toMealForm(meal: Meal): MealForm {
-  return {
-    ...meal,
-    date: new Date(meal.date),
-    items: meal.items.map(i => ({
-      weight: i.weight.toString(),
-      foodId: i.foodId,
-    })),
-  };
-}
-
-const MealSchema = Yup.object().shape({
-  date: Yup.date().required(),
-  items: Yup.array().of(
-      Yup.object().shape({
-        weight: Yup.number().required().min(0).max(1000).positive(),
-        foodId: Yup.string().required(),
-      }),
-  ),
-});
-
 export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
   const dispatch = useAppDispatch();
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const foodState = useAppSelector(state => state.food.items);
 
   const exist = useAppSelector(findMealById(route.params?.id));
 
-  const meal: MealForm = exist ? toMealForm(exist) : defaultMeal;
+  const meal: MealForm = exist ? toMealForm(exist) : defaultMeal();
   // skip the screen for new meal, but only if there is no food selected
   // useEffect(() => {
   //   if (!route.params.id && !route.params.foodId) {
@@ -155,45 +116,45 @@ export function MealEdit({navigation, route}: SectionProps): React.JSX.Element {
             <View style={styles.container}>
               <ScrollView>
                 <View style={formStyles.form}>
-                  <FieldArray
-                      name={'items'}
-                      render={arrayHelpers =>
-                          values.items.map((foodItem, index) => (
-                              <View key={index}>
-                                <Text>Food Id {foodItem.foodId}</Text>
-
-                                <Field
-                                    label={'Weight'}
-                                    errors={errors.items?.[index]?.weight}
-                                    touched={touched.items?.[index]?.weight}
-                                >
-                                  <TextInput
-                                      style={formStyles.input}
-                                      inputMode={'numeric'}
-                                      maxLength={4}
-                                      value={values.items[index].weight}
-                                      onChangeText={handleChange(`items[${index}].weight`)}
-                                      onBlur={handleBlur(`items[${index}].weight`)}
-                                      placeholder={'0'}
-                                  />
-                                </Field>
-
-                                {foodCard(foodItem)}
-
-                                <Button
-                                    title={'Remove'}
-                                    onPress={() => arrayHelpers.remove(index)}
-                                />
-                              </View>
-                          ))
-                      }
-                  />
-
                   <Field
-                      label={'Date ' + values.date.toISOString()}
-                      errors={errors.date}
-                      touched={touched.date}
+                      label={'Items'}
+                      name={'items'}
                   >
+                    <FieldArray
+                        name={'items'}
+                        render={arrayHelpers =>
+                            values.items.map((foodItem, index) => (
+                                <View key={index}>
+                                  <Text>Food Id {foodItem.foodId}</Text>
+
+                                  <Field
+                                      label={'Weight'}
+                                      name={`items[${index}].weight`}
+                                  >
+                                    <TextInput
+                                        style={formStyles.input}
+                                        inputMode={'numeric'}
+                                        maxLength={4}
+                                        value={values.items[index].weight}
+                                        onChangeText={handleChange(`items[${index}].weight`)}
+                                        onBlur={handleBlur(`items[${index}].weight`)}
+                                        placeholder={'0'}
+                                    />
+                                  </Field>
+
+                                  {foodCard(foodItem)}
+
+                                  <Button
+                                      title={'Remove'}
+                                      onPress={() => arrayHelpers.remove(index)}
+                                  />
+                                </View>
+                            ))
+                        }
+                    />
+                  </Field>
+
+                  <Field label={'Date ' + values.date.toISOString()} name={'date'}>
                     <DatePicker
                         date={values.date}
                         onDateChange={(date) => setFieldValue('date', date)}

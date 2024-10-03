@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Food } from '../domain/food.ts';
 import { generateId, ID } from '../domain/id.ts';
-import { mockFood } from '../domain/mock-food.ts';
 import { RootState } from '../domain/store.ts';
 
 export interface FoodState {
@@ -10,8 +9,8 @@ export interface FoodState {
 
 const initialState: FoodState = {
   items: [
-    mockFood[0],
-    mockFood[1],
+    // mockFood[0],
+    // mockFood[1],
   ],
 };
 

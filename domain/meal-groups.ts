@@ -1,7 +1,7 @@
 import { Meal } from './meal.ts';
 import { DateGroup, dateRange, DateRange, printDateRange } from './date';
 import { generateId } from './id';
-import { Food, FoodType, foodWeighted } from './food.ts';
+import { Food, foodWeighted } from './food.ts';
 
 export interface MealGroup {
     range: DateRange;
@@ -12,7 +12,6 @@ export interface MealGroup {
 export function summary(group: MealGroup): Food {
     const result: Food = {
         id: generateId(),
-        type: FoodType.Mix,
         name: 'Summary',
         weight: 0,
         kcal: 0,

@@ -1,22 +1,14 @@
-import {ID} from './id';
-
-export enum FoodType {
-  Default = 'default',
-  Mix = 'mix',
-  Order = 'order',
-  Custom = 'custom',
-}
+import { ID } from './id';
+import * as Yup from 'yup';
 
 export interface Food {
     id: ID;
     name: string;
     weight: number;
-    type: FoodType;
     kcal: number;
     protein: number;
     fat: number;
     carbs: number;
-    ingredientIds?: ID[];
 }
 
 export function foodWeighted(food: Food, weight: number): Food {
@@ -29,3 +21,45 @@ export function foodWeighted(food: Food, weight: number): Food {
         carbs: food.carbs * weight / food.weight,
     };
 }
+
+interface FoodForm {
+    id?: string;
+    name: string;
+    weight: string;
+    kcal: string;
+    protein: string;
+    fat: string;
+    carbs: string;
+}
+
+export const defaultFood = (): FoodForm => ({
+    name: '',
+    weight: '',
+    kcal: '',
+    protein: '',
+    fat: '',
+    carbs: '',
+});
+
+export function toFoodForm(food: Food): FoodForm {
+    return {
+        ...food,
+        weight: food.weight.toString(),
+        kcal: food.kcal.toString(),
+        protein: food.protein.toString(),
+        fat: food.fat.toString(),
+        carbs: food.carbs.toString(),
+    };
+}
+
+export const FoodSchema = Yup.object().shape({
+    name: Yup.string()
+        .min(1)
+        .max(50)
+        .required(),
+    weight: Yup.number().required().min(0).max(1000).positive(),
+    kcal: Yup.number().required().min(0).max(1000),
+    protein: Yup.number().required().min(0).max(1000),
+    fat: Yup.number().required().min(0).max(1000),
+    carbs: Yup.number().required().min(0).max(1000),
+});

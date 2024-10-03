@@ -1,11 +1,9 @@
 import { Button, ScrollView, StyleSheet, TextInput, View, } from 'react-native';
 import React, { PropsWithChildren } from 'react';
-import RNPickerSelect from 'react-native-picker-select';
-import { Food, FoodType } from '../domain/food.ts';
+import { defaultFood, FoodSchema, toFoodForm } from '../domain/food.ts';
 import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { addFood, findFoodById, updateFood } from '../features/foodSlice.tsx';
 import { Field } from './Field.tsx';
 
@@ -14,61 +12,11 @@ type SectionProps = PropsWithChildren<{
     navigation: any;
 }>;
 
-interface FoodForm {
-    id?: string;
-    name: string;
-    weight: string;
-    type: FoodType;
-    kcal: string;
-    protein: string;
-    fat: string;
-    carbs: string;
-}
-
-const defaultFood: FoodForm = {
-    name: '',
-    weight: '',
-    type: FoodType.Default,
-    kcal: '',
-    protein: '',
-    fat: '',
-    carbs: '',
-};
-
-function toFoodForm(food: Food): FoodForm {
-    return {
-        ...food,
-        weight: food.weight.toString(),
-        kcal: food.kcal.toString(),
-        protein: food.protein.toString(),
-        fat: food.fat.toString(),
-        carbs: food.carbs.toString(),
-    };
-}
-
-const FoodSchema = Yup.object().shape({
-    name: Yup.string()
-        .min(1)
-        .max(50)
-        .required(),
-    weight: Yup.number().required().min(0).max(1000).positive(),
-    type: Yup.mixed<FoodType>().oneOf(Object.values(FoodType)).required(),
-    kcal: Yup.number().required().min(0).max(1000),
-    protein: Yup.number().required().min(0).max(1000),
-    fat: Yup.number().required().min(0).max(1000),
-    carbs: Yup.number().required().min(0).max(1000),
-});
-
-const types = Object.keys(FoodType).map(key => {
-    // @ts-ignore
-    return {label: key, value: FoodType[key]};
-});
-
 export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const exist = useAppSelector(state => findFoodById(state, route.params?.id));
-    const food = exist ? toFoodForm(exist) : defaultFood;
+    const food = exist ? toFoodForm(exist) : defaultFood();
 
     return (
         <Formik
@@ -90,7 +38,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                 <View style={styles.container}>
                     <ScrollView>
                         <View style={formStyles.form}>
-                            <Field label={'Name'} errors={errors.name} touched={touched.name}>
+                            <Field label={'Name'} name={'name'}>
                                 <TextInput
                                     style={formStyles.input}
                                     value={values.name}
@@ -99,7 +47,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Weight'} errors={errors.weight} touched={touched.weight}>
+                            <Field label={'Weight'} name={'weight'}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -111,18 +59,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Type'} errors={errors.type} touched={touched.type}>
-                                <View style={formStyles.select}>
-                                    <RNPickerSelect
-                                        value={values.type}
-                                        items={types}
-                                        onValueChange={handleChange('type')}
-                                        onClose={handleBlur('type')}
-                                    />
-                                </View>
-                            </Field>
-
-                            <Field label={'Kcal'} errors={errors.kcal} touched={touched.kcal}>
+                            <Field label={'Kcal'} name={'kcal'}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -134,7 +71,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Protein'} errors={errors.protein} touched={touched.protein}>
+                            <Field label={'Protein'} name={'protein'}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -146,7 +83,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Fat'} errors={errors.fat} touched={touched.fat}>
+                            <Field label={'Fat'} name={'fat'}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
@@ -158,7 +95,7 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
                                 />
                             </Field>
 
-                            <Field label={'Carbs'} errors={errors.carbs} touched={touched.carbs}>
+                            <Field label={'Carbs'} name={'carbs'}>
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}

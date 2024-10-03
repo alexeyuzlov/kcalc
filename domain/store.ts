@@ -1,15 +1,35 @@
-import {configureStore, createSelector} from '@reduxjs/toolkit';
+import { combineReducers, configureStore, createSelector } from '@reduxjs/toolkit';
 import foodReducer from '../features/foodSlice';
 import mealReducer from '../features/mealSlice';
-import {mealGroups} from './meal-groups.ts';
+import { mealGroups } from './meal-groups.ts';
 import { ID } from './id.ts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { persistReducer, persistStore } from 'redux-persist';
+import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
 
-export const store = configureStore({
-  reducer: {
+const persistConfig = {
+    key: 'root',
+    storage: AsyncStorage,
+};
+
+const root = combineReducers({
     food: foodReducer,
     meal: mealReducer,
-  },
 });
+
+const persistedReducer = persistReducer(persistConfig, root);
+
+export const store = configureStore({
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+        }),
+});
+
+export const persistor = persistStore(store);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
