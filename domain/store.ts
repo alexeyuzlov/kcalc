@@ -6,6 +6,7 @@ import { ID } from './id.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
+import { DateGroup } from './date.ts';
 
 const persistConfig = {
     key: 'root',
@@ -39,21 +40,25 @@ export type AppDispatch = typeof store.dispatch;
 export const meal = (state: RootState) => state.meal.items;
 export const food = (state: RootState) => state.food.items;
 
-export const getMealGroups = createSelector([meal, food], (meal, food) => {
-  return mealGroups(meal, food);
+export const getMealGroups = (dateGroup: DateGroup) => createSelector([meal, food], (meal, food) => {
+    return mealGroups(meal, food, dateGroup);
 });
 
-export const findMealById = (id: ID) => createSelector([meal, food], (meal, food) => {
-  const item = meal.find(meal => meal.id === id);
-  if (!item) {
-    return;
-  }
+export const findMealById = (id?: ID) => createSelector([meal, food], (meal, food) => {
+    if (!id) {
+        return;
+    }
 
-  return {
-    ...item,
-    items: item.items.map(item => ({
-      ...item,
-      food: food.find(food => food.id === item.foodId),
-    })),
-  };
+    const item = meal.find(meal => meal.id === id);
+    if (!item) {
+        return;
+    }
+
+    return {
+        ...item,
+        items: item.items.map(item => ({
+            ...item,
+            food: food.find(food => food.id === item.foodId),
+        })),
+    };
 });

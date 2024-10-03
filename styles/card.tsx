@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export const cardStyles = StyleSheet.create({
   container: {
@@ -7,4 +7,8 @@ export const cardStyles = StyleSheet.create({
     borderRadius: 4,
     gap: 8,
   },
+  containerOut: {
+    padding: 8,
+    gap: 8
+  }
 });

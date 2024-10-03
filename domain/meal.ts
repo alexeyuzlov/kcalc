@@ -12,16 +12,20 @@ export type FoodWeighted = {
 export interface Meal {
   id: ID;
   date: ISODate;
+  name?: string;
   items: FoodWeighted[];
+}
+
+export type FoodWeightedForm = {
+  weight: string;
+  foodId: string;
 }
 
 export type MealForm = {
   id?: string;
+  name?: string;
   date: Date;
-  items: Array<{
-    weight: string;
-    foodId: string;
-  }>;
+  items: FoodWeightedForm[];
 };
 
 export const defaultMeal = (): MealForm => ({
@@ -41,6 +45,9 @@ export function toMealForm(meal: Meal): MealForm {
 }
 
 export const MealSchema = Yup.object().shape({
+  name: Yup.string()
+      .min(1)
+      .max(50),
   date: Yup.date().required(),
   items: Yup.array().of(
       Yup.object().shape({

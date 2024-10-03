@@ -1,86 +1,83 @@
-import {Button, FlatList, StyleSheet, TextInput, View} from 'react-native';
-import React, {PropsWithChildren, useEffect, useRef, useState} from 'react';
-import {FoodCard} from './FoodCard.tsx';
-import {formStyles} from '../styles/form.tsx';
-import {useAppSelector} from '../domain/hooks.ts';
-import {food} from '../domain/store.ts';
-import {Food} from '../domain/food.ts';
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { PropsWithChildren, useRef } from 'react';
+import { FoodCard } from './FoodCard.tsx';
+import { formStyles } from '../styles/form.tsx';
+import { useAppSelector } from '../domain/hooks.ts';
+import { food } from '../domain/store.ts';
+import { ID } from '../domain/id.ts';
+import { FoodEditCta } from './FoodEditCta.tsx';
+import { layoutStyles } from '../styles/layout.tsx';
+import { typoStyles } from '../styles/typo.tsx';
 
 type SectionProps = PropsWithChildren<{
-  navigation: any;
-  route: any;
+    selectable: boolean;
+    selectedIds: Array<ID>;
+    setSelectedIds: (ids: Array<ID>) => void;
+    select: () => void;
 }>;
 
-export function FoodList({navigation, route}: SectionProps): React.JSX.Element {
-  const items = useAppSelector(food);
+export function FoodList({
+                             selectable,
+                             selectedIds,
+                             setSelectedIds,
+                             select,
+                         }: SectionProps): React.JSX.Element {
+    const items = useAppSelector(food);
 
-  const searchRef = useRef<TextInput>(null);
+    const searchRef = useRef<TextInput>(null);
 
-  const [selectable, setSelectable] = useState(false);
+    const prepareSelectedIds = (item: { id: ID }) => {
+        if (selectedIds && setSelectedIds) {
+            if (selectedIds.includes(item.id)) {
+                setSelectedIds(selectedIds.filter(id => id !== item.id));
+            } else {
+                setSelectedIds([...selectedIds, item.id]);
+            }
+        }
+    };
 
-  useEffect(() => {
-    setSelectable(route.params?.select || false);
-    if (route.params?.select) {
-      // setTimeout(() => {
-      //   searchRef.current?.focus();
-      // });
-    }
-  }, [route.params?.select, navigation]);
+    return (
+        <View style={layoutStyles.container}>
+            <View style={layoutStyles.header}>
+                <Text style={typoStyles.heading}>Food List</Text>
+                <FoodEditCta/>
+            </View>
 
-  const selectFood = (item: Food) => {
-    setSelectable(false);
-    navigation.navigate('MealEdit', {
-      id: route.params?.mealId,
-      foodId: item.id,
-    });
-  };
+            <TextInput ref={searchRef} style={styles.search} placeholder="Search"/>
 
-  return (
-    <View style={styles.container}>
-      <TextInput ref={searchRef} style={styles.search} placeholder="Search" />
+            <FlatList
+                style={styles.list}
+                data={items}
+                keyExtractor={item => item.id}
+                contentContainerStyle={{gap: 8}}
+                renderItem={({item}) => (
+                    <FoodCard
+                        item={item}
+                        selectable={selectable}
+                        selected={selectedIds ? selectedIds.includes(item.id) : false}
+                        select={() => prepareSelectedIds(item)}
+                    />
+                )}
+            />
 
-      <FlatList
-        style={styles.list}
-        data={items}
-        keyExtractor={item => item.id}
-        contentContainerStyle={{gap: 8}}
-        renderItem={({item}) => (
-          <FoodCard
-            item={item}
-            navigation={navigation}
-            selectable={selectable}
-            select={() =>selectFood(item)}
-          />
-        )}
-      />
-
-      <View style={formStyles.button}>
-        <Button
-          title="Add New Food Item"
-          onPress={() =>
-            navigation.navigate('FoodEdit', {title: 'Add New Food Item'})
-          }
-        />
-      </View>
-    </View>
-  );
+            <View style={formStyles.button}>
+                <Button title={'Select ' + selectedIds.length} onPress={select}/>
+            </View>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  list: {
-    flex: 1,
-    gap: 8,
-    margin: 8,
-  },
-  search: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 8,
-    borderRadius: 4,
-  },
+    list: {
+        flex: 1,
+        gap: 8,
+        margin: 8,
+    },
+    search: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        margin: 8,
+        borderRadius: 4,
+    },
 });

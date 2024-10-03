@@ -9,10 +9,12 @@ export interface MealGroup {
     data: Meal[];
 }
 
-export function summary(group: MealGroup): Food {
+export function summary(items: Meal[], name: string): Food {
+    const foods: Food[] = [];
+
     const result: Food = {
         id: generateId(),
-        name: 'Summary',
+        name,
         weight: 0,
         kcal: 0,
         protein: 0,
@@ -20,29 +22,36 @@ export function summary(group: MealGroup): Food {
         carbs: 0,
     };
 
-    return group.data.reduce((acc, meal) => {
-        return meal.items.reduce((prev, current) => {
-            const food = current.food;
-            if (!food) {
-                return prev;
+    items.forEach(item => {
+        item.items.forEach(item => {
+            const food = item.food;
+            if (food) {
+                foods.push(foodWeighted(food, item.weight));
             }
+        });
+    });
 
-            return {
-                ...prev,
-                weight: prev.weight + food.weight,
-                kcal: prev.kcal + food.kcal,
-                protein: prev.protein + food.protein,
-                fat: prev.fat + food.fat,
-                carbs: prev.carbs + food.carbs,
-            };
-        }, acc);
+    return foods.reduce((prev, current) => {
+        const food = current;
+        if (!food) {
+            return prev;
+        }
+
+        return {
+            ...prev,
+            weight: prev.weight + food.weight,
+            kcal: prev.kcal + food.kcal,
+            protein: prev.protein + food.protein,
+            fat: prev.fat + food.fat,
+            carbs: prev.carbs + food.carbs,
+        };
     }, result);
 }
 
 export function mealGroups(
     mealState: readonly Meal[],
     foodState: readonly Food[],
-    dateGroup: DateGroup = 'day',
+    dateGroup: DateGroup,
 ): MealGroup[] {
     return [...mealState]
         .sort((a: Meal, b: Meal) => new Date(b.date).getTime() - new Date(a.date).getTime())

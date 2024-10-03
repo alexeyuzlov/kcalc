@@ -22,7 +22,7 @@ export function foodWeighted(food: Food, weight: number): Food {
     };
 }
 
-interface FoodForm {
+export interface FoodForm {
     id?: string;
     name: string;
     weight: string;

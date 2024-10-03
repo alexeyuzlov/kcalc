@@ -5,7 +5,7 @@ import { formStyles } from '../styles/form.tsx';
 
 type SectionProps = PropsWithChildren<{
     children: React.ReactNode;
-    label: string;
+    label?: string;
     name?: string;
 }>;
 
@@ -16,7 +16,7 @@ export function Field({
                       }: SectionProps): React.JSX.Element {
     return (
         <View>
-            <Text>{label}</Text>
+            {label && <Text>{label}</Text>}
             {children}
             {name &&
                 <ErrorMessage name={name} render={(value: any) => {

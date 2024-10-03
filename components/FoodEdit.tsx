@@ -1,41 +1,53 @@
-import { Button, ScrollView, StyleSheet, TextInput, View, } from 'react-native';
+import { Button, ScrollView, Text, TextInput, View, } from 'react-native';
 import React, { PropsWithChildren } from 'react';
-import { defaultFood, FoodSchema, toFoodForm } from '../domain/food.ts';
+import { defaultFood, FoodForm, FoodSchema, toFoodForm } from '../domain/food.ts';
 import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { Formik } from 'formik';
 import { addFood, findFoodById, updateFood } from '../features/foodSlice.tsx';
 import { Field } from './Field.tsx';
+import { ID } from '../domain/id.ts';
+import { layoutStyles } from '../styles/layout.tsx';
+import { typoStyles } from '../styles/typo.tsx';
 
 type SectionProps = PropsWithChildren<{
-    route: any;
-    navigation: any;
+    id?: ID;
+    done: () => void;
 }>;
 
-export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
+export function FoodEdit({
+                             id,
+                             done,
+                         }: SectionProps): React.JSX.Element {
     const dispatch = useAppDispatch();
 
-    const exist = useAppSelector(state => findFoodById(state, route.params?.id));
+    const exist = useAppSelector(state => findFoodById(state, id));
     const food = exist ? toFoodForm(exist) : defaultFood();
+
+    const handleSubmit = (values: FoodForm) => {
+        const foodEdit = FoodSchema.cast(values);
+
+        if (food.id) {
+            dispatch(updateFood({id: food.id, body: foodEdit}));
+        } else {
+            dispatch(addFood(foodEdit));
+        }
+
+        done();
+    }
 
     return (
         <Formik
             initialValues={food}
             validationSchema={FoodSchema}
-            onSubmit={values => {
-                const foodEdit = FoodSchema.cast(values);
-
-                if (food.id) {
-                    dispatch(updateFood({id: food.id, body: foodEdit}));
-                    navigation.navigate('FoodList');
-                } else {
-                    dispatch(addFood(foodEdit));
-                    navigation.navigate('FoodList');
-                }
-            }}
+            onSubmit={handleSubmit}
         >
-            {({errors, touched, handleChange, handleBlur, handleSubmit, values}) => (
-                <View style={styles.container}>
+            {({handleChange, handleBlur, handleSubmit, values}) => (
+                <View style={layoutStyles.container}>
+                    <View style={layoutStyles.header}>
+                        <Text style={typoStyles.heading}>{id ? 'Edit Food' : 'Add Food'}</Text>
+                    </View>
+
                     <ScrollView>
                         <View style={formStyles.form}>
                             <Field label={'Name'} name={'name'}>
@@ -117,10 +129,3 @@ export function FoodEdit({navigation, route}: SectionProps): React.JSX.Element {
         </Formik>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-    },
-});
