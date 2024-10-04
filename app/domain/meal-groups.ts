@@ -1,6 +1,6 @@
 import { Meal } from './meal.ts';
-import { DateGroup, dateRange, DateRange, printDateRange } from './date';
-import { generateId } from './id';
+import { DateGroup, dateRange, DateRange, printDateRange } from './date.ts';
+import { generateId } from './id.ts';
 import { Food, foodWeighted } from './food.ts';
 
 export interface MealGroup {

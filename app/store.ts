@@ -1,12 +1,14 @@
 import { combineReducers, configureStore, createSelector } from '@reduxjs/toolkit';
-import foodReducer from '../features/foodSlice';
-import mealReducer from '../features/mealSlice';
-import { mealGroups } from './meal-groups.ts';
-import { ID } from './id.ts';
+import foodReducer from './features/foodSlice.tsx';
+import mealReducer from './features/mealSlice.tsx';
+import { mealGroups } from './domain/meal-groups.ts';
+import { ID } from './domain/id.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
-import { DateGroup } from './date.ts';
+import { DateGroup } from './domain/date.ts';
+import { Meal } from './domain/meal.ts';
+import { Food } from './domain/food.ts';
 
 const persistConfig = {
     key: 'root',
@@ -39,10 +41,6 @@ export type AppDispatch = typeof store.dispatch;
 
 export const meal = (state: RootState) => state.meal.items;
 export const food = (state: RootState) => state.food.items;
-
-export const getMealGroups = (dateGroup: DateGroup) => createSelector([meal, food], (meal, food) => {
-    return mealGroups(meal, food, dateGroup);
-});
 
 export const findMealById = (id?: ID) => createSelector([meal, food], (meal, food) => {
     if (!id) {

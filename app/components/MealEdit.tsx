@@ -4,12 +4,12 @@ import { defaultMeal, MealForm, MealSchema, toMealForm } from '../domain/meal.ts
 import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { FieldArray, Formik } from 'formik';
-import { findMealById } from '../domain/store.ts';
+import { findMealById } from '../store.ts';
 import { Field } from './Field.tsx';
 import DatePicker from 'react-native-date-picker';
 import { addMeal, updateMeal } from '../features/mealSlice.tsx';
 import { FoodCard } from './FoodCard.tsx';
-import { ID } from '../domain/id.ts';
+import { generateId, ID } from '../domain/id.ts';
 import { foodWeighted } from '../domain/food.ts';
 import { FoodList } from './FoodList.tsx';
 import { layoutStyles } from '../styles/layout.tsx';
@@ -17,11 +17,13 @@ import { typoStyles } from '../styles/typo.tsx';
 
 type SectionProps = PropsWithChildren<{
     id?: ID;
+    newMeal?: MealForm;
     done: () => void;
 }>;
 
 export function MealEdit({
                              id,
+                             newMeal,
                              done
                          }: SectionProps): React.JSX.Element {
     const dispatch = useAppDispatch();
@@ -32,7 +34,7 @@ export function MealEdit({
 
     const exist = useAppSelector(findMealById(id));
 
-    const meal: MealForm = exist ? toMealForm(exist) : defaultMeal();
+    const meal: MealForm = newMeal || (exist ? toMealForm(exist) : defaultMeal());
 
     const [selectedIds, setSelectedIds] = useState<Array<ID>>([
         ...meal.items.map(i => i.foodId),
@@ -88,7 +90,10 @@ export function MealEdit({
                 if (meal.id) {
                     dispatch(updateMeal({id: meal.id, body: mealEdit}));
                 } else {
-                    dispatch(addMeal(mealEdit));
+                    dispatch(addMeal({
+                        ...mealEdit,
+                        id: generateId()
+                    }));
                 }
 
                 done();

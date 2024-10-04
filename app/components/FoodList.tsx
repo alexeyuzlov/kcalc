@@ -1,9 +1,8 @@
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { PropsWithChildren, useRef } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 import { FoodCard } from './FoodCard.tsx';
 import { formStyles } from '../styles/form.tsx';
 import { useAppSelector } from '../domain/hooks.ts';
-import { food } from '../domain/store.ts';
 import { ID } from '../domain/id.ts';
 import { FoodEditCta } from './FoodEditCta.tsx';
 import { layoutStyles } from '../styles/layout.tsx';
@@ -22,9 +21,13 @@ export function FoodList({
                              setSelectedIds,
                              select,
                          }: SectionProps): React.JSX.Element {
-    const items = useAppSelector(food);
+    const food = useAppSelector((state) => state.food.items);
 
-    const searchRef = useRef<TextInput>(null);
+    const [search, setSearch] = useState<string>('');
+
+    const filteredFood = search
+        ? food.filter(m => m.name?.toLowerCase().includes(search.toLowerCase()))
+        : food;
 
     const prepareSelectedIds = (item: { id: ID }) => {
         if (selectedIds && setSelectedIds) {
@@ -43,11 +46,16 @@ export function FoodList({
                 <FoodEditCta/>
             </View>
 
-            <TextInput ref={searchRef} style={styles.search} placeholder="Search"/>
+            <TextInput
+                style={formStyles.search}
+                placeholder="Search"
+                value={search}
+                onChangeText={setSearch}
+            />
 
             <FlatList
                 style={styles.list}
-                data={items}
+                data={filteredFood}
                 keyExtractor={item => item.id}
                 contentContainerStyle={{gap: 8}}
                 renderItem={({item}) => (
@@ -72,12 +80,5 @@ const styles = StyleSheet.create({
         flex: 1,
         gap: 8,
         margin: 8,
-    },
-    search: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        margin: 8,
-        borderRadius: 4,
     },
 });

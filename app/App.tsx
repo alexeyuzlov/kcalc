@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
-import { persistor, store } from './domain/store.ts';
+import { persistor, store } from './store.ts';
 import { PersistGate } from 'redux-persist/integration/react';
 import { MealList } from './components/MealList.tsx';
 

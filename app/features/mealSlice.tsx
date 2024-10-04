@@ -16,14 +16,9 @@ export const mealSlice = createSlice({
   reducers: {
     addMeal: (
       state: MealState,
-      action: PayloadAction<Omit<Meal, 'id'>>,
+      action: PayloadAction<Meal>,
     ) => {
-      const item: Meal = {
-        id: generateId(),
-        ...action.payload,
-      };
-
-      state.items.push(item);
+      state.items.push(action.payload);
     },
     updateMeal: (
       state: MealState,

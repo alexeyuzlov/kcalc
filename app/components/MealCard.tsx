@@ -10,10 +10,12 @@ import { Summary } from './Summary.tsx';
 
 type SectionProps = PropsWithChildren<{
     item: Meal;
+    copy: () => void;
 }>;
 
 export function MealCard({
                              item,
+                             copy,
                          }: SectionProps): React.JSX.Element {
     const dispatch = useAppDispatch();
 
@@ -50,8 +52,7 @@ export function MealCard({
             <View style={styles.group}>
                 <Button
                     title="Copy Meal"
-                    onPress={() => {
-                    }}
+                    onPress={copy}
                 />
 
                 <MealEditCta id={item.id}/>

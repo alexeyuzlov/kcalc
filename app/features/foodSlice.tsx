@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Food } from '../domain/food.ts';
 import { generateId, ID } from '../domain/id.ts';
-import { RootState } from '../domain/store.ts';
+import { RootState } from '../store.ts';
 
 export interface FoodState {
   items: Food[];
@@ -20,8 +20,8 @@ export const foodSlice = createSlice({
   reducers: {
     addFood: (state: FoodState, action: PayloadAction<Omit<Food, 'id'>>) => {
       const item: Food = {
-        id: generateId(),
         ...action.payload,
+        id: generateId(),
       };
 
       state.items.push(item);

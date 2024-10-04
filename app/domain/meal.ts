@@ -1,4 +1,4 @@
-import { ID } from './id';
+import { ID } from './id.ts';
 import { ISODate } from './date.ts';
 import { Food } from './food.ts';
 import * as Yup from 'yup';

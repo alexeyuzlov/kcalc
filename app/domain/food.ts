@@ -1,4 +1,4 @@
-import { ID } from './id';
+import { ID } from './id.ts';
 import * as Yup from 'yup';
 
 export interface Food {

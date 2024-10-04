@@ -1,4 +1,6 @@
 import {StyleSheet} from 'react-native';
+import { dangerColor } from './variables.tsx';
+
 
 export const typoStyles = StyleSheet.create({
     heading: {
@@ -7,6 +9,6 @@ export const typoStyles = StyleSheet.create({
     },
     headingPrimary: {
         fontSize: 18,
-        color: '#bb0000',
+        color: dangerColor,
     },
 });
