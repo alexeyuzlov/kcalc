@@ -1,22 +1,33 @@
-import {StyleSheet} from 'react-native';
+import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import { borderColor, defaultOffset } from './variables.tsx';
+
+const row: ViewStyle | TextStyle | ImageStyle = {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: defaultOffset,
+};
 
 export const layoutStyles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
     },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: 10,
+    modal: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
     },
+    row,
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 16,
-        borderBottomColor: 'gray',
-        borderBottomWidth: 1
+        ...row,
+        padding: defaultOffset,
+        borderBottomColor: borderColor,
+        borderBottomWidth: 1,
     },
+    footer: {
+        ...row,
+        padding: defaultOffset,
+        borderTopColor: borderColor,
+        borderTopWidth: 1,
+    }
 });

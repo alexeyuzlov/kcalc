@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { Alert, Button, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Button, Switch, Text, View } from 'react-native';
 import { Food } from '../domain/food.ts';
 import { Number } from './Number.tsx';
 import { cardStyles } from '../styles/card.tsx';
@@ -9,6 +9,7 @@ import { ID } from '../domain/id.ts';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
 import { FoodEditCta } from './FoodEditCta.tsx';
+import { dangerColor } from '../styles/variables.tsx';
 
 type SectionProps = PropsWithChildren<{
     item: Food;
@@ -17,6 +18,7 @@ type SectionProps = PropsWithChildren<{
     selected?: boolean;
     select?: (id: ID) => void;
     readonly?: boolean;
+    children?: React.ReactNode;
 }>;
 
 export function FoodCard({
@@ -26,6 +28,7 @@ export function FoodCard({
                              selected,
                              select,
                              readonly,
+                             children
                          }: SectionProps): React.JSX.Element {
     const dispatch = useAppDispatch();
 
@@ -44,14 +47,22 @@ export function FoodCard({
 
     return (
         <View style={cardStyles.container}>
-            <View style={layoutStyles.row}>
-                <Text
-                    style={
-                        primary ? typoStyles.headingPrimary : typoStyles.heading
-                    }>
-
-                    {item.name}
+            <View style={{...layoutStyles.row, alignItems: 'flex-start'}}>
+                <Text style={primary ? typoStyles.headingPrimary : typoStyles.heading}>
+                    {item.name + ' '}
+                    ({<Number value={item.weight}/>})
+                    {children}
                 </Text>
+
+                <Number value={item.kcal}/>
+            </View>
+
+            <View style={{flexDirection: 'row', gap: 4}}>
+                <Number value={item.protein}/>
+                <Text>/</Text>
+                <Number value={item.fat}/>
+                <Text>/</Text>
+                <Number value={item.carbs}/>
             </View>
 
             {!readonly && (
@@ -65,47 +76,9 @@ export function FoodCard({
 
                     <FoodEditCta id={item.id}/>
 
-                    <Button color={'#bb0000'} onPress={confirmRemove} title="Delete"/>
+                    <Button color={dangerColor} onPress={confirmRemove} title="Delete Food"/>
                 </View>
             )}
-
-            <View style={layoutStyles.row}>
-                <View style={styles.category}>
-                    <Text style={styles.term}>Weight</Text>
-                    <Number value={item.weight}/>
-                </View>
-
-                <View style={styles.category}>
-                    <Text style={styles.term}>Kcal</Text>
-                    <Number value={item.kcal}/>
-                </View>
-
-                <View style={styles.category}>
-                    <Text style={styles.term}>Protein</Text>
-                    <Number value={item.protein}/>
-                </View>
-
-                <View style={styles.category}>
-                    <Text style={styles.term}>Fat</Text>
-                    <Number value={item.fat}/>
-                </View>
-
-                <View style={styles.category}>
-                    <Text style={styles.term}>Carbs</Text>
-                    <Number value={item.carbs}/>
-                </View>
-            </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    term: {
-        fontWeight: 'bold',
-    },
-    category: {
-        flexDirection: 'column',
-        gap: 4,
-        alignItems: 'center',
-    },
-});

@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { Alert, Button, StyleSheet, View } from 'react-native';
+import { Alert, Button, View } from 'react-native';
 import { Meal } from '../domain/meal.ts';
 import { FoodCard } from './FoodCard.tsx';
 import { cardStyles } from '../styles/card.tsx';
@@ -7,6 +7,8 @@ import { useAppDispatch } from '../domain/hooks.ts';
 import { removeMeal } from '../features/mealSlice.tsx';
 import { MealEditCta } from './MealEditCta.tsx';
 import { Summary } from './Summary.tsx';
+import { dangerColor, defaultOffset } from '../styles/variables.tsx';
+import { layoutStyles } from '../styles/layout.tsx';
 
 type SectionProps = PropsWithChildren<{
     item: Meal;
@@ -46,10 +48,10 @@ export function MealCard({
             {
                 item.name
                     ? <Summary name={item.name} items={[item]}/>
-                    : <View style={{gap: 10}}>{items}</View>
+                    : <View style={{gap: defaultOffset}}>{items}</View>
             }
 
-            <View style={styles.group}>
+            <View style={layoutStyles.row}>
                 <Button
                     title="Copy Meal"
                     onPress={copy}
@@ -58,7 +60,7 @@ export function MealCard({
                 <MealEditCta id={item.id}/>
 
                 <Button
-                    color={'#bb0000'}
+                    color={dangerColor}
                     onPress={confirmRemove}
                     title="Delete Meal"
                 />
@@ -66,10 +68,3 @@ export function MealCard({
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    group: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    }
-});

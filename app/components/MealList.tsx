@@ -1,19 +1,26 @@
-import { SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, SectionList, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { Meal, MealForm, toMealForm } from '../domain/meal.ts';
 import { MealCard } from './MealCard.tsx';
 import { Summary } from './Summary.tsx';
-import { useAppSelector } from '../domain/hooks.ts';
+import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
 import { MealEditCta } from './MealEditCta.tsx';
 import { DateGroup } from '../domain/date.ts';
 import { formStyles } from '../styles/form.tsx';
 import { mealGroups } from '../domain/meal-groups.ts';
+import { defaultOffset } from '../styles/variables.tsx';
+import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
+import { loadFile } from '../domain/file.ts';
+import { importFood } from '../features/foodSlice.tsx';
+import { importMeal } from '../features/mealSlice.tsx';
 
 type SectionProps = PropsWithChildren<{}>;
 
 export function MealList({}: SectionProps): React.JSX.Element {
+    const dispatch = useAppDispatch();
+
     const dateGroup: DateGroup = 'day';
 
     const [search, setSearch] = useState<string>('');
@@ -45,6 +52,51 @@ export function MealList({}: SectionProps): React.JSX.Element {
         setNewMeal(newMeal);
     };
 
+    const importFile = async () => {
+        try {
+            const res: DocumentPickerResponse[] = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+            });
+
+            const file = res[0];
+            const data = await loadFile(file.uri);
+
+            if (data) {
+                const {meal, food} = JSON.parse(data);
+                dispatch(importFood({food}));
+                dispatch(importMeal({meal}));
+            }
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // nothing
+            } else {
+                console.error(err);
+            }
+        }
+    };
+
+    const exportFile = async () => {
+        try {
+            const result = await Share.share({
+                message: JSON.stringify({
+                    meal,
+                    food
+                }),
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error: any) {
+            Alert.alert(error.message);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={layoutStyles.header}>
@@ -62,7 +114,8 @@ export function MealList({}: SectionProps): React.JSX.Element {
             <SectionList
                 sections={groups}
                 keyExtractor={item => item.id}
-                contentContainerStyle={search ? null : {gap: 8}}
+                contentContainerStyle={search ? null : {gap: defaultOffset}}
+                stickySectionHeadersEnabled={true}
                 renderSectionHeader={data =>
                     <Text style={styles.sectionHeading}>
                         {data.section.rangeAsString}
@@ -76,6 +129,13 @@ export function MealList({}: SectionProps): React.JSX.Element {
                     : <Summary name={`${dateGroup} summary`} items={data.section.data}/>
                 }
             />
+            <View style={layoutStyles.footer}>
+                <View></View>
+                <View style={layoutStyles.row}>
+                    <Button title={'Load'} onPress={importFile}/>
+                    <Button title={'Save'} onPress={exportFile}/>
+                </View>
+            </View>
         </View>
     );
 }
@@ -87,10 +147,10 @@ const styles = StyleSheet.create({
     },
     sectionHeading: {
         backgroundColor: '#f0f0f0',
-        padding: 8,
+        padding: defaultOffset,
     },
     list: {
         flex: 1,
-        margin: 10,
+        margin: defaultOffset,
     },
 });

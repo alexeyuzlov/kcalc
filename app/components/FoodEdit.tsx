@@ -9,6 +9,7 @@ import { Field } from './Field.tsx';
 import { ID } from '../domain/id.ts';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
+import { primaryColor } from '../styles/variables.tsx';
 
 type SectionProps = PropsWithChildren<{
     id?: ID;
@@ -24,8 +25,11 @@ export function FoodEdit({
     const exist = useAppSelector(state => findFoodById(state, id));
     const food = exist ? toFoodForm(exist) : defaultFood();
 
-    const handleSubmit = (values: FoodForm) => {
+    const submitForm = (values: FoodForm) => {
+        console.info('Food', values);
+
         const foodEdit = FoodSchema.cast(values);
+        foodEdit.name = foodEdit.name?.trim();
 
         if (food.id) {
             dispatch(updateFood({id: food.id, body: foodEdit}));
@@ -34,13 +38,13 @@ export function FoodEdit({
         }
 
         done();
-    }
+    };
 
     return (
         <Formik
             initialValues={food}
             validationSchema={FoodSchema}
-            onSubmit={handleSubmit}
+            onSubmit={submitForm}
         >
             {({handleChange, handleBlur, handleSubmit, values}) => (
                 <View style={layoutStyles.container}>
@@ -63,7 +67,7 @@ export function FoodEdit({
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
-                                    maxLength={4}
+                                    maxLength={7}
                                     value={values.weight}
                                     onChangeText={handleChange('weight')}
                                     onBlur={handleBlur('weight')}
@@ -75,7 +79,7 @@ export function FoodEdit({
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
-                                    maxLength={4}
+                                    maxLength={7}
                                     value={values.kcal}
                                     onChangeText={handleChange('kcal')}
                                     onBlur={handleBlur('kcal')}
@@ -87,7 +91,7 @@ export function FoodEdit({
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
-                                    maxLength={4}
+                                    maxLength={7}
                                     value={values.protein}
                                     onChangeText={handleChange('protein')}
                                     onBlur={handleBlur('protein')}
@@ -99,7 +103,7 @@ export function FoodEdit({
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
-                                    maxLength={4}
+                                    maxLength={7}
                                     value={values.fat}
                                     onChangeText={handleChange('fat')}
                                     onBlur={handleBlur('fat')}
@@ -111,7 +115,7 @@ export function FoodEdit({
                                 <TextInput
                                     style={formStyles.input}
                                     inputMode={'numeric'}
-                                    maxLength={4}
+                                    maxLength={7}
                                     value={values.carbs}
                                     onChangeText={handleChange('carbs')}
                                     onBlur={handleBlur('carbs')}
@@ -121,8 +125,10 @@ export function FoodEdit({
                         </View>
                     </ScrollView>
 
-                    <View style={formStyles.button}>
-                        <Button title={'Save'} onPress={handleSubmit}/>
+                    <View style={layoutStyles.footer}>
+                        <View style={{flex: 1}}>
+                            <Button color={primaryColor} title={'Save'} onPress={handleSubmit}/>
+                        </View>
                     </View>
                 </View>
             )}

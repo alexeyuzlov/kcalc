@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
-import { dangerColor } from './variables.tsx';
+import { StyleSheet } from 'react-native';
+import { dangerColor, defaultOffset } from './variables.tsx';
 
 const input = {
     height: 40,
@@ -7,29 +7,29 @@ const input = {
     borderWidth: 1,
     backgroundColor: 'white',
     borderRadius: 4,
-}
+};
 
 export const formStyles = StyleSheet.create({
-  form: {
-    gap: 10,
-    margin: 10,
-  },
-  input,
-  search: {
-    ...input,
-    margin: 8,
-  },
-  select: {
-    ...input,
-    justifyContent: 'center',
-    padding: 0,
-  },
-  button: {
-    padding: 10,
-    borderColor: 'gray',
-    borderTopWidth: 1,
-  },
-  error: {
-    color: dangerColor
-  }
+    form: {
+        gap: defaultOffset,
+        margin: defaultOffset,
+    },
+    input,
+    search: {
+        ...input,
+        margin: defaultOffset,
+    },
+    button: {
+        backgroundColor: 'red',
+        margin: defaultOffset,
+        color: 'red',
+    },
+    select: {
+        ...input,
+        justifyContent: 'center',
+        padding: 0,
+    },
+    error: {
+        color: dangerColor
+    }
 });

@@ -8,10 +8,7 @@ export interface FoodState {
 }
 
 const initialState: FoodState = {
-  items: [
-    // mockFood[0],
-    // mockFood[1],
-  ],
+  items: [],
 };
 
 export const foodSlice = createSlice({
@@ -26,17 +23,24 @@ export const foodSlice = createSlice({
 
       state.items.push(item);
     },
-    updateFood: (state: FoodState, action: PayloadAction<{id: ID; body: Partial<Food>}>) => {
+    updateFood: (state: FoodState, action: PayloadAction<{ id: ID; body: Partial<Food> }>) => {
       state.items = state.items.map(item => item.id === action.payload.id ? {...item, ...action.payload.body} : item);
     },
     removeFood: (state: FoodState, action: PayloadAction<ID>) => {
       state.items = state.items.filter(food => food.id !== action.payload);
     },
+    importFood: (state: FoodState, action: PayloadAction<{ food: Food[] }>) => {
+      state.items = action.payload.food;
+    }
   },
 });
 
-// Action creators are generated for each case reducer function
-export const {addFood, updateFood, removeFood} = foodSlice.actions;
+export const {
+  addFood,
+  updateFood,
+  removeFood,
+  importFood
+} = foodSlice.actions;
 
 export const findFoodById = (state: RootState, id?: ID) =>
     state.food.items.find(food => food.id === id);

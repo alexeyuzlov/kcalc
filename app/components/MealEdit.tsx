@@ -14,6 +14,7 @@ import { foodWeighted } from '../domain/food.ts';
 import { FoodList } from './FoodList.tsx';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
+import { defaultOffset } from '../styles/variables.tsx';
 
 type SectionProps = PropsWithChildren<{
     id?: ID;
@@ -80,9 +81,12 @@ export function MealEdit({
             initialValues={meal}
             validationSchema={MealSchema}
             onSubmit={values => {
+                console.info('Meal', values);
+
                 const cast = MealSchema.cast(values);
                 const mealEdit = {
                     ...cast,
+                    name: cast.name?.trim(),
                     date: cast.date.toISOString(),
                     items: cast.items!
                 };
@@ -99,7 +103,7 @@ export function MealEdit({
                 done();
             }}
         >
-            {({setFieldValue, errors, touched, handleChange, handleBlur, handleSubmit, values}) => (
+            {({setFieldValue, handleChange, handleBlur, handleSubmit, values}) => (
                 <View style={layoutStyles.container}>
                     <View style={layoutStyles.header}>
                         <Text style={typoStyles.heading}>{title}</Text>
@@ -112,7 +116,7 @@ export function MealEdit({
                                     name={'items'}
                                     render={arrayHelpers =>
                                         values.items.map((foodItem, index) => (
-                                            <View key={foodItem.foodId} style={{gap: 8}}>
+                                            <View key={foodItem.foodId} style={{gap: defaultOffset}}>
                                                 <Field
                                                     label={'Weight'}
                                                     name={`items[${index}].weight`}
@@ -120,7 +124,7 @@ export function MealEdit({
                                                     <TextInput
                                                         style={formStyles.input}
                                                         inputMode={'numeric'}
-                                                        maxLength={4}
+                                                        maxLength={7}
                                                         value={values.items[index].weight}
                                                         onChangeText={handleChange(`items[${index}].weight`)}
                                                         onBlur={handleBlur(`items[${index}].weight`)}
@@ -138,7 +142,7 @@ export function MealEdit({
                                 />
                             </Field>
 
-                            <Field label={'Name'} name={'name'}>
+                            <Field label={'Meal Name (for search)'} name={'name'}>
                                 <TextInput
                                     style={formStyles.input}
                                     value={values.name}
@@ -172,8 +176,10 @@ export function MealEdit({
                         </Modal>
                     }
 
-                    <View style={formStyles.button}>
-                        <Button style={formStyles.button} title={'Save'} onPress={handleSubmit}/>
+                    <View style={layoutStyles.footer}>
+                        <View style={{flex: 1}}>
+                            <Button title={'Save'} onPress={handleSubmit}/>
+                        </View>
                     </View>
                 </View>
             )}

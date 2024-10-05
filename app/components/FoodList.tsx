@@ -7,6 +7,7 @@ import { ID } from '../domain/id.ts';
 import { FoodEditCta } from './FoodEditCta.tsx';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
+import { defaultOffset } from '../styles/variables.tsx';
 
 type SectionProps = PropsWithChildren<{
     selectable: boolean;
@@ -57,7 +58,7 @@ export function FoodList({
                 style={styles.list}
                 data={filteredFood}
                 keyExtractor={item => item.id}
-                contentContainerStyle={{gap: 8}}
+                contentContainerStyle={{gap: defaultOffset}}
                 renderItem={({item}) => (
                     <FoodCard
                         item={item}
@@ -68,8 +69,10 @@ export function FoodList({
                 )}
             />
 
-            <View style={formStyles.button}>
-                <Button title={'Select ' + selectedIds.length} onPress={select}/>
+            <View style={layoutStyles.footer}>
+                <View style={{flex: 1}}>
+                    <Button title={'Select ' + selectedIds.length} onPress={select}/>
+                </View>
             </View>
         </View>
     );
@@ -78,7 +81,7 @@ export function FoodList({
 const styles = StyleSheet.create({
     list: {
         flex: 1,
-        gap: 8,
-        margin: 8,
+        gap: defaultOffset,
+        margin: defaultOffset,
     },
 });

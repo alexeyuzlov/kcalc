@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
+import { defaultOffset } from './variables.tsx';
 
 export const cardStyles = StyleSheet.create({
   container: {
-    padding: 8,
+      padding: defaultOffset,
     backgroundColor: '#e6e6e6',
     borderRadius: 4,
-    gap: 8,
+      gap: defaultOffset,
   },
   containerOut: {
-    padding: 8,
-    gap: 8
+      padding: defaultOffset,
+      gap: defaultOffset
   }
 });
