@@ -1,23 +1,32 @@
-import { combineReducers, configureStore, createSelector } from '@reduxjs/toolkit';
+import {
+  combineReducers,
+  configureStore,
+  createSelector,
+} from '@reduxjs/toolkit';
 import foodReducer from './features/foodSlice.tsx';
 import mealReducer from './features/mealSlice.tsx';
-import { mealGroups } from './domain/meal-groups.ts';
-import { ID } from './domain/id.ts';
+import selectionReducer from './features/selectionSlice.tsx';
+import {ID} from './domain/id.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { persistReducer, persistStore } from 'redux-persist';
-import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
-import { DateGroup } from './domain/date.ts';
-import { Meal } from './domain/meal.ts';
-import { Food } from './domain/food.ts';
+import {persistReducer, persistStore} from 'redux-persist';
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from 'redux-persist/es/constants';
 
 const persistConfig = {
-    key: 'root',
-    storage: AsyncStorage,
+  key: 'root',
+  storage: AsyncStorage,
 };
 
 const root = combineReducers({
-    food: foodReducer,
-    meal: mealReducer,
+  food: foodReducer,
+  meal: mealReducer,
+  selection: selectionReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, root);

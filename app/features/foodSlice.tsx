@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Food } from '../domain/food.ts';
-import { generateId, ID } from '../domain/id.ts';
-import { RootState } from '../store.ts';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {Food} from '../domain/food.ts';
+import {generateId, ID} from '../domain/id.ts';
+import {RootState} from '../store.ts';
 
 export interface FoodState {
   items: Food[];
@@ -21,7 +21,7 @@ export const foodSlice = createSlice({
         id: generateId(),
       };
 
-      state.items.push(item);
+      state.items = [item, ...state.items];
     },
     updateFood: (state: FoodState, action: PayloadAction<{ id: ID; body: Partial<Food> }>) => {
       state.items = state.items.map(item => item.id === action.payload.id ? {...item, ...action.payload.body} : item);

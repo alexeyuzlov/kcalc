@@ -1,81 +1,88 @@
-import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { PropsWithChildren, useState } from 'react';
-import { FoodCard } from './FoodCard.tsx';
-import { formStyles } from '../styles/form.tsx';
-import { useAppSelector } from '../domain/hooks.ts';
-import { ID } from '../domain/id.ts';
-import { FoodEditCta } from './FoodEditCta.tsx';
-import { layoutStyles } from '../styles/layout.tsx';
-import { typoStyles } from '../styles/typo.tsx';
-import { defaultOffset } from '../styles/variables.tsx';
+import {
+  Button,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import React, {useState} from 'react';
+import {FoodCard} from './FoodCard.tsx';
+import {formStyles} from '../styles/form.tsx';
+import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
+import {ID} from '../domain/id.ts';
+import {FoodEditCta} from './FoodEditCta.tsx';
+import {layoutStyles} from '../styles/layout.tsx';
+import {typoStyles} from '../styles/typo.tsx';
+import {defaultOffset} from '../styles/variables.tsx';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../routes.tsx';
+import {
+  addToSelection,
+  removeFromSelection,
+} from '../features/selectionSlice.tsx';
 
-type SectionProps = PropsWithChildren<{
-    selectable: boolean;
-    selectedIds: Array<ID>;
-    setSelectedIds: (ids: Array<ID>) => void;
-    select: () => void;
-}>;
+type Props = NativeStackScreenProps<RootStackParamList, 'FoodList'>;
 
-export function FoodList({
-                             selectable,
-                             selectedIds,
-                             setSelectedIds,
-                             select,
-                         }: SectionProps): React.JSX.Element {
-    const food = useAppSelector((state) => state.food.items);
+export function FoodList({navigation}: Props): React.JSX.Element {
+  const dispatch = useAppDispatch();
 
-    const [search, setSearch] = useState<string>('');
+  const food = useAppSelector(state => state.food.items);
+  const selection = useAppSelector(state => state.selection);
 
-    const filteredFood = search
-        ? food.filter(m => m.name?.toLowerCase().includes(search.toLowerCase()))
-        : food;
+  const [search, setSearch] = useState<string>('');
 
-    const prepareSelectedIds = (item: { id: ID }) => {
-        if (selectedIds && setSelectedIds) {
-            if (selectedIds.includes(item.id)) {
-                setSelectedIds(selectedIds.filter(id => id !== item.id));
-            } else {
-                setSelectedIds([...selectedIds, item.id]);
-            }
-        }
-    };
+  const filteredFood = search
+    ? food.filter(m => m.name?.toLowerCase().includes(search.toLowerCase()))
+    : food;
 
-    return (
-        <View style={layoutStyles.container}>
-            <View style={layoutStyles.header}>
-                <Text style={typoStyles.heading}>Food List</Text>
-                <FoodEditCta/>
-            </View>
+  const prepareSelectedIds = (item: {id: ID}) => {
+    if (!selection.items.includes(item.id)) {
+      dispatch(addToSelection(item.id));
+    } else {
+      dispatch(removeFromSelection(item.id));
+    }
+  };
 
-            <TextInput
-                style={formStyles.search}
-                placeholder="Search"
-                value={search}
-                onChangeText={setSearch}
-            />
+  return (
+    <View style={layoutStyles.container}>
+      <View style={layoutStyles.header}>
+        <Text style={typoStyles.heading}>Food List</Text>
+        <FoodEditCta />
+      </View>
 
-            <FlatList
-                style={styles.list}
-                data={filteredFood}
-                keyExtractor={item => item.id}
-                contentContainerStyle={{gap: defaultOffset}}
-                renderItem={({item}) => (
-                    <FoodCard
-                        item={item}
-                        selectable={selectable}
-                        selected={selectedIds ? selectedIds.includes(item.id) : false}
-                        select={() => prepareSelectedIds(item)}
-                    />
-                )}
-            />
+      <TextInput
+        style={formStyles.search}
+        placeholder="Search"
+        value={search}
+        onChangeText={setSearch}
+      />
 
-            <View style={layoutStyles.footer}>
-                <View style={{flex: 1}}>
-                    <Button title={'Select ' + selectedIds.length} onPress={select}/>
-                </View>
-            </View>
+      <FlatList
+        style={styles.list}
+        data={filteredFood}
+        keyExtractor={item => item.id}
+        contentContainerStyle={{gap: defaultOffset}}
+        renderItem={({item}) => (
+          <FoodCard
+            item={item}
+            selectable={true}
+            selected={selection.items.includes(item.id)}
+            select={() => prepareSelectedIds(item)}
+          />
+        )}
+      />
+
+      <View style={layoutStyles.footer}>
+        <View style={{flex: 1}}>
+          <Button
+            title={'Select ' + selection.items.length}
+            onPress={() => navigation.goBack()}
+          />
         </View>
-    );
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

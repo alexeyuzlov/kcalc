@@ -1,5 +1,5 @@
-import { Text } from 'react-native';
-import React, { PropsWithChildren } from 'react';
+import {StyleSheet, Text} from 'react-native';
+import React, {PropsWithChildren} from 'react';
 
 type SectionProps = PropsWithChildren<{
   value: number;
@@ -8,5 +8,9 @@ type SectionProps = PropsWithChildren<{
 export function Number({value}: SectionProps): React.JSX.Element {
   let prepared = (value).toFixed(2);
 
-  return <Text>{prepared}</Text>;
+  return <Text style={styles.text}>{prepared}</Text>;
 }
+
+const styles = StyleSheet.create({
+  text: {},
+});

@@ -1,42 +1,33 @@
-import { Button, Modal, View, } from 'react-native';
-import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { ID } from '../domain/id.ts';
-import { MealEdit } from './MealEdit.tsx';
-import { MealForm } from '../domain/meal.ts';
+import {Button, View} from 'react-native';
+import React, {PropsWithChildren, useEffect} from 'react';
+import {ID} from '../domain/id.ts';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../routes.tsx';
 
 type SectionProps = PropsWithChildren<{
-    id?: ID;
-    newMeal?: MealForm;
+  id?: ID;
+  newMealId?: ID;
 }>;
 
-export function MealEditCta({id, newMeal}: SectionProps): React.JSX.Element {
-    const [modalVisible, setModalVisible] = useState(false);
+export function MealEditCta({id, newMealId}: SectionProps): React.JSX.Element {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    const title = id ? 'Edit Meal' : 'Add Meal';
+  const title = id ? 'Edit Meal' : 'Add Meal';
 
-    useEffect(() => {
-        if (newMeal) {
-            setModalVisible(true);
-        }
-    }, [newMeal]);
+  useEffect(() => {
+    if (newMealId) {
+      navigation.navigate('MealEdit', {newMealId});
+    }
+  }, [newMealId, navigation]);
 
-    return (
-        <View>
-            <Button
-                onPress={() => setModalVisible(true)}
-                title={title}
-            />
-
-            {
-                modalVisible &&
-                <Modal
-                    animationType="slide"
-                    visible={modalVisible}
-                    onRequestClose={() => setModalVisible(false)}
-                >
-                    <MealEdit id={id} newMeal={newMeal} done={() => setModalVisible(false)}/>
-                </Modal>
-            }
-        </View>
-    );
+  return (
+    <View>
+      <Button
+        onPress={() => navigation.navigate('MealEdit', {id})}
+        title={title}
+      />
+    </View>
+  );
 }
