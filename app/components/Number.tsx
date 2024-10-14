@@ -1,16 +1,14 @@
-import {StyleSheet, Text} from 'react-native';
-import React, {PropsWithChildren} from 'react';
+import {Text} from 'react-native';
+import React, {PropsWithChildren, useMemo} from 'react';
 
 type SectionProps = PropsWithChildren<{
   value: number;
 }>;
 
 export function Number({value}: SectionProps): React.JSX.Element {
-  let prepared = (value).toFixed(2);
+  const prepared = useMemo(() => {
+    return value.toFixed(2);
+  }, [value]);
 
-  return <Text style={styles.text}>{prepared}</Text>;
+  return <Text>{prepared}</Text>;
 }
-
-const styles = StyleSheet.create({
-  text: {},
-});
