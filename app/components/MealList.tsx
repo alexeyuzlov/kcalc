@@ -1,5 +1,12 @@
-import {SectionList, StyleSheet, Text, TextInput, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {
+  Button,
+  SectionList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
 import {Meal} from '../domain/meal.ts';
 import {MealCard} from './MealCard.tsx';
 import {Summary} from './Summary.tsx';
@@ -7,7 +14,7 @@ import {useAppSelector} from '../domain/hooks.ts';
 import {layoutStyles} from '../styles/layout.tsx';
 import {typoStyles} from '../styles/typo.tsx';
 import {MealEditCta} from './MealEditCta.tsx';
-import {DateGroup} from '../domain/date.ts';
+import {DateGroup, dateGroups} from '../domain/date.ts';
 import {formStyles} from '../styles/form.tsx';
 import {mealGroups} from '../domain/meal-groups.ts';
 import {defaultOffset} from '../styles/variables.tsx';
@@ -17,16 +24,16 @@ import {ID} from '../domain/id.ts';
 import {ImportFile} from './ImportFile.tsx';
 import {ExportFile} from './ExportFile.tsx';
 import {food, meal} from '../store.ts';
+import {Select} from './Select.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MealList'>;
 
-export function MealList({}: Props): React.JSX.Element {
-  const dateGroup: DateGroup = 'day';
-
-  const [search, setSearch] = useState<string>('');
-
+export function MealList({navigation}: Props): React.JSX.Element {
   const mealState = useAppSelector(meal);
   const foodState = useAppSelector(food);
+
+  const [search, setSearch] = useState<string>('');
+  const [dateGroup, setDateGroup] = useState<DateGroup>('day');
 
   const filteredMeal = search
     ? mealState.filter(m =>
@@ -34,7 +41,9 @@ export function MealList({}: Props): React.JSX.Element {
       )
     : mealState;
 
-  const groups = mealGroups(filteredMeal, foodState, dateGroup);
+  const groups = useMemo(() => {
+    return mealGroups(filteredMeal, foodState, dateGroup);
+  }, [filteredMeal, foodState, dateGroup]);
 
   const [newMealId, setNewMealId] = useState<ID>();
 
@@ -55,12 +64,19 @@ export function MealList({}: Props): React.JSX.Element {
         <MealEditCta newMealId={newMealId} />
       </View>
 
-      <TextInput
-        style={formStyles.search}
-        placeholder="Search by meal name"
-        value={search}
-        onChangeText={setSearch}
-      />
+      <View style={{...layoutStyles.row, margin: defaultOffset}}>
+        <TextInput
+            style={{...formStyles.input, flex: 2}}
+            placeholder="Search by meal name"
+            value={search}
+            onChangeText={setSearch}
+        />
+
+        <View style={{flex: 1}}>
+          <Select value={dateGroup} onChange={setDateGroup} items={dateGroups} />
+        </View>
+      </View>
+
 
       <SectionList
         sections={groups}
@@ -82,6 +98,10 @@ export function MealList({}: Props): React.JSX.Element {
         }
       />
       <View style={layoutStyles.footer}>
+        <Button
+          title={'Food List'}
+          onPress={() => navigation.navigate('FoodList', {})}
+        />
         <View></View>
         <View style={layoutStyles.row}>
           <ImportFile />

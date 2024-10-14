@@ -1,7 +1,7 @@
 import React, {PropsWithChildren, useMemo} from 'react';
 import {FoodCard} from './FoodCard.tsx';
-import {summary} from '../domain/meal-groups.ts';
 import {Meal} from '../domain/meal.ts';
+import {summary} from '../domain/summary.ts';
 
 type SectionProps = PropsWithChildren<{
   name: string;

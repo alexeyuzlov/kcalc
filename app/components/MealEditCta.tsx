@@ -1,4 +1,4 @@
-import {Button, View} from 'react-native';
+import {Button} from 'react-native';
 import React, {PropsWithChildren, useEffect} from 'react';
 import {ID} from '../domain/id.ts';
 import {useNavigation} from '@react-navigation/native';
@@ -23,11 +23,9 @@ export function MealEditCta({id, newMealId}: SectionProps): React.JSX.Element {
   }, [newMealId, navigation]);
 
   return (
-    <View>
-      <Button
-        onPress={() => navigation.navigate('MealEdit', {id})}
-        title={title}
-      />
-    </View>
+    <Button
+      onPress={() => navigation.navigate('MealEdit', {id})}
+      title={title}
+    />
   );
 }

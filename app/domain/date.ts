@@ -1,5 +1,13 @@
 export type DateGroup = 'day' | 'week' | 'month' | 'year' | 'season';
 
+export const dateGroups = [
+  {value: 'day', heading: 'Day'},
+  {value: 'week', heading: 'Week'},
+  {value: 'month', heading: 'Month'},
+  {value: 'year', heading: 'Year'},
+  {value: 'season', heading: 'Season'},
+];
+
 export type ISODate = string;
 
 export interface DateRange {
@@ -12,13 +20,13 @@ export function dateRange(date: Date, group: DateGroup): DateRange {
         case 'day':
             return {
                 gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
-                lte: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
+                lte: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59)
             };
         case 'week':
             const weekDay = date.getDay();
             return {
                 gte: new Date(date.getFullYear(), date.getMonth(), date.getDate() - weekDay),
-                lte: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7 - weekDay)
+                lte: new Date(date.getFullYear(), date.getMonth(), date.getDate() - weekDay + 7)
             };
         case 'month':
             return {

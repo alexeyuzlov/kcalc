@@ -21,6 +21,7 @@ import {
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
+  blacklist: ['selection'],
 };
 
 const root = combineReducers({

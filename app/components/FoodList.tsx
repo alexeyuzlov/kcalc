@@ -21,11 +21,15 @@ import {
   addToSelection,
   removeFromSelection,
 } from '../features/selectionSlice.tsx';
+import {ImportFile} from './ImportFile.tsx';
+import {ExportFile} from './ExportFile.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'FoodList'>;
 
-export function FoodList({navigation}: Props): React.JSX.Element {
+export function FoodList({navigation, route}: Props): React.JSX.Element {
   const dispatch = useAppDispatch();
+
+  const selectable = route.params?.selectable || false;
 
   const food = useAppSelector(state => state.food.items);
   const selection = useAppSelector(state => state.selection);
@@ -63,10 +67,11 @@ export function FoodList({navigation}: Props): React.JSX.Element {
         data={filteredFood}
         keyExtractor={item => item.id}
         contentContainerStyle={{gap: defaultOffset}}
-        renderItem={({item}) => (
+        renderItem={({item, index}) => (
           <FoodCard
+            index={index}
             item={item}
-            selectable={true}
+            selectable={selectable}
             selected={selection.items.includes(item.id)}
             select={() => prepareSelectedIds(item)}
           />
@@ -74,11 +79,24 @@ export function FoodList({navigation}: Props): React.JSX.Element {
       />
 
       <View style={layoutStyles.footer}>
-        <View style={{flex: 1}}>
+        {selectable ? (
+          <View style={{flex: 1}}>
+            <Button
+              title={'Select ' + selection.items.length}
+              onPress={() => navigation.goBack()}
+            />
+          </View>
+        ) : (
           <Button
-            title={'Select ' + selection.items.length}
-            onPress={() => navigation.goBack()}
+            title={'Meal List'}
+            onPress={() => navigation.navigate('MealList')}
           />
+        )}
+
+        <View></View>
+        <View style={layoutStyles.row}>
+          <ImportFile />
+          <ExportFile />
         </View>
       </View>
     </View>
@@ -86,9 +104,9 @@ export function FoodList({navigation}: Props): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-    list: {
-        flex: 1,
-        gap: defaultOffset,
-        margin: defaultOffset,
-    },
+  list: {
+    flex: 1,
+    gap: defaultOffset,
+    margin: defaultOffset,
+  },
 });

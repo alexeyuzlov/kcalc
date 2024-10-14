@@ -10,18 +10,17 @@ type SectionProps = PropsWithChildren<{
 }>;
 
 export function FoodEditCta({id}: SectionProps): React.JSX.Element {
-    const navigation =
-      useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    const title = id ? 'Edit Food' : 'Add Food';
+  const title = id ? 'Edit Food' : 'Add Food';
 
-    return (
-      <View>
-        <Button
-          onPress={() => navigation.navigate('FoodEdit', {id})}
-          title={title}
-        />
-      </View>
-    );
+  return (
+    <View>
+      <Button
+        onPress={() => navigation.navigate('FoodEdit', {id})}
+        title={title}
+      />
+    </View>
+  );
 }
-

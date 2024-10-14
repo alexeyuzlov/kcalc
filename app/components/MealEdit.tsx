@@ -83,6 +83,10 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
       const selectedIds = meal.items.map(i => i.foodId);
       dispatch(setSelection(selectedIds));
 
+      if (selectedIds.length === 0) {
+        navigation.navigate('FoodList', {selectable: true});
+      }
+
       return () => {
         dispatch(setSelection([]));
       };
@@ -122,7 +126,7 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
               <Text style={typoStyles.heading}>{title}</Text>
               <Button
                 title={'Select Food'}
-                onPress={() => navigation.navigate('FoodList')}
+                onPress={() => navigation.navigate('FoodList', {selectable: true})}
               />
             </View>
             <ScrollView>
@@ -154,6 +158,7 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
                           </Field>
 
                           <FoodWeighted
+                            index={index}
                             fw={foodItem}
                             removeFn={() => {
                               arrayHelpers.remove(index);

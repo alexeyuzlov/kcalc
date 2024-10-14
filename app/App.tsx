@@ -25,7 +25,7 @@ function App(): React.JSX.Element {
               <Stack.Screen
                 name="MealList"
                 component={MealList}
-                options={{title: 'Meal List', headerShown: false}}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="FoodList"

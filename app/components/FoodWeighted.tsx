@@ -6,11 +6,13 @@ import {food} from '../store.ts';
 import {FoodWeightedForm} from '../domain/meal.ts';
 
 type SectionProps = PropsWithChildren<{
+  index?: number;
   fw: FoodWeightedForm;
   removeFn: () => void;
 }>;
 
 export function FoodWeighted({
+  index,
   fw,
   removeFn,
 }: SectionProps): React.JSX.Element | null {
@@ -25,6 +27,7 @@ export function FoodWeighted({
 
   return result ? (
     <FoodCard
+      index={index}
       item={result}
       selectable={true}
       selected={true}

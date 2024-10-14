@@ -12,6 +12,7 @@ import {FoodEditCta} from './FoodEditCta.tsx';
 import {dangerColor} from '../styles/variables.tsx';
 
 type SectionProps = PropsWithChildren<{
+  index?: number;
   item: Food;
   primary?: boolean;
   selectable?: boolean;
@@ -22,6 +23,7 @@ type SectionProps = PropsWithChildren<{
 }>;
 
 export function FoodCard({
+  index,
   item,
   primary,
   selectable,
@@ -50,8 +52,11 @@ export function FoodCard({
       <View style={{...layoutStyles.row, alignItems: 'flex-start'}}>
         <Pressable onPress={onPress}>
           <Text
-            style={primary ? typoStyles.headingPrimary : typoStyles.heading}>
-            {item.name + ' '}({<Number value={item.weight} />}&nbsp;grams)
+            style={primary ? typoStyles.headingPrimary : typoStyles.heading}
+          >
+            {index !== undefined ? `${index + 1}. ` : ''}
+            {item.name + ' '}
+            ({<Number value={item.weight} />}&nbsp;grams)
           </Text>
         </Pressable>
       </View>
@@ -66,6 +71,7 @@ export function FoodCard({
         <View style={layoutStyles.spacer}></View>
 
         <Number value={item.kcal} />
+        <Text>kcal</Text>
       </View>
 
       {!readonly && (
