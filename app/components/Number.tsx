@@ -3,12 +3,17 @@ import React, {PropsWithChildren, useMemo} from 'react';
 
 type SectionProps = PropsWithChildren<{
   value: number;
+  children?: React.ReactNode;
 }>;
 
-export function Number({value}: SectionProps): React.JSX.Element {
+export function Number({value, children}: SectionProps): React.JSX.Element {
   const prepared = useMemo(() => {
     return value.toFixed(2);
   }, [value]);
 
-  return <Text>{prepared}</Text>;
+  return (
+    <Text>
+      {prepared} {children}
+    </Text>
+  );
 }

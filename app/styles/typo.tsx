@@ -4,11 +4,11 @@ import { dangerColor } from './variables.tsx';
 
 export const typoStyles = StyleSheet.create({
     heading: {
-        fontSize: 18,
+        fontSize: 16,
         color: '#000',
     },
     headingPrimary: {
-        fontSize: 18,
+        fontSize: 16,
         color: dangerColor,
     },
 });

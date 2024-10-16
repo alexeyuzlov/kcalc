@@ -55,8 +55,7 @@ export function FoodCard({
             style={primary ? typoStyles.headingPrimary : typoStyles.heading}
           >
             {index !== undefined ? `${index + 1}. ` : ''}
-            {item.name + ' '}
-            ({<Number value={item.weight} />}&nbsp;grams)
+            {item.name}
           </Text>
         </Pressable>
       </View>
@@ -70,8 +69,9 @@ export function FoodCard({
 
         <View style={layoutStyles.spacer}></View>
 
-        <Number value={item.kcal} />
-        <Text>kcal</Text>
+        <Number value={item.weight}>grams</Number>
+        <Text>/</Text>
+        <Number value={item.kcal}>kcal</Number>
       </View>
 
       {!readonly && (

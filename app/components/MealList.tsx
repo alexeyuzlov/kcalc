@@ -1,5 +1,6 @@
 import {
   Button,
+  Pressable,
   SectionList,
   StyleSheet,
   Text,
@@ -8,7 +9,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import {MealCard} from './MealCard.tsx';
-import {Summary} from './Summary.tsx';
 import {useAppSelector} from '../domain/hooks.ts';
 import {layoutStyles} from '../styles/layout.tsx';
 import {typoStyles} from '../styles/typo.tsx';
@@ -23,6 +23,10 @@ import {ImportFile} from './ImportFile.tsx';
 import {ExportFile} from './ExportFile.tsx';
 import {food, meal} from '../store.ts';
 import {Select} from './Select.tsx';
+import {ID} from '../domain/id.ts';
+import {cardStyles} from '../styles/card.tsx';
+import {Number} from './Number.tsx';
+import {FoodCard} from './FoodCard.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MealList'>;
 
@@ -43,9 +47,28 @@ export function MealList({navigation}: Props): React.JSX.Element {
     return mealGroups(filteredMeal, foodState, dateGroup);
   }, [filteredMeal, foodState, dateGroup]);
 
+  const [visible, setVisible] = useState<Record<ID, boolean>>({});
+
   useEffect(() => {
     setSearch('');
   }, [mealState]);
+
+  const toggleVisible = (id: ID) => {
+    setVisible({
+      ...visible,
+      [id]: !visible[id],
+    });
+  };
+
+  useEffect(() => {
+    if (!groups.length) {
+      return;
+    }
+
+    setVisible({
+      [groups[0].id]: true,
+    });
+  }, [groups]);
 
   return (
     <View style={styles.container}>
@@ -56,13 +79,13 @@ export function MealList({navigation}: Props): React.JSX.Element {
 
       <View style={{...layoutStyles.row, margin: defaultOffset}}>
         <TextInput
-          style={{...formStyles.input, flex: 2}}
+          style={{...formStyles.input, flex: 3}}
           placeholder="Search by meal name"
           value={search}
           onChangeText={setSearch}
         />
 
-        <View style={{flex: 1}}>
+        <View style={{flex: 2}}>
           <Select
             value={dateGroup}
             onChange={setDateGroup}
@@ -74,19 +97,47 @@ export function MealList({navigation}: Props): React.JSX.Element {
       <SectionList
         sections={groups}
         keyExtractor={item => item.id}
-        contentContainerStyle={search ? null : {gap: defaultOffset}}
         stickySectionHeadersEnabled={true}
+        contentContainerStyle={{marginBottom: 100}}
         renderSectionHeader={data => (
-          <Text style={styles.sectionHeading}>
-            {data.section.rangeAsString}
-          </Text>
+          <View style={cardStyles.container}>
+            <View style={layoutStyles.row}>
+              <Pressable onPress={() => toggleVisible(data.section.id)}>
+                <Text style={styles.sectionHeading}>
+                  {data.section.rangeAsString}
+                </Text>
+              </Pressable>
+
+              <View style={layoutStyles.spacer}></View>
+
+              <Number value={data.section.summary.weight}>grams</Number>
+              <Text>/</Text>
+              <Number value={data.section.summary.kcal}>kcal</Number>
+            </View>
+          </View>
         )}
-        renderItem={({item}) => <MealCard item={item} />}
-        renderSectionFooter={data =>
-          search ? null : (
-            <Summary name={`${dateGroup} summary`} items={data.section.data} />
-          )
-        }
+        renderItem={section => {
+          if (visible[section.section.id]) {
+            return <MealCard item={section.item} />;
+          }
+
+          return null;
+        }}
+        renderSectionFooter={data => {
+          if (!search && visible[data.section.id]) {
+            return (
+              <View style={styles.sectionFooter}>
+                <FoodCard
+                  item={data.section.summary}
+                  primary={true}
+                  readonly={true}
+                />
+              </View>
+            );
+          }
+
+          return null;
+        }}
       />
       <View style={layoutStyles.footer}>
         <Button
@@ -109,8 +160,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   sectionHeading: {
-    backgroundColor: '#f0f0f0',
-    padding: defaultOffset,
+    ...typoStyles.headingPrimary,
+    fontSize: 16,
+  },
+  sectionFooter: {
+    marginBottom: defaultOffset * 2,
   },
   list: {
     flex: 1,
