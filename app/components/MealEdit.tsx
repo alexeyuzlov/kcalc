@@ -1,9 +1,9 @@
 import {Button, ScrollView, Text, TextInput, View} from 'react-native';
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {defaultMeal, MealForm, MealSchema, toMealForm} from '../domain/meal.ts';
 import {formStyles} from '../styles/form.tsx';
 import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
-import {FieldArray, Formik, useFormikContext} from 'formik';
+import {FieldArray, Formik} from 'formik';
 import {findMealById, food} from '../store.ts';
 import {Field} from './Field.tsx';
 import DatePicker from 'react-native-date-picker';
@@ -19,47 +19,21 @@ import {
   setSelection,
 } from '../features/selectionSlice.tsx';
 import {FoodWeighted} from './FoodWeighted.tsx';
+import {FormikProps} from 'formik/dist/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MealEdit'>;
-
-const BusinessLogic = () => {
-    const {values, setFieldValue} = useFormikContext<MealForm>();
-    const ids = useAppSelector(state => state.selection.items);
-    const foodState = useAppSelector(food);
-
-    useEffect(() => {
-      setFieldValue(
-        'items',
-        ids
-          .map(id => {
-            const foodExist = values.items.find(f => f.foodId === id);
-            if (foodExist) {
-              return foodExist;
-            }
-
-            const food = foodState.find(f => f.id === id);
-            if (!food) {
-              return null;
-            }
-
-            return {
-              weight: food.weight.toString(),
-              foodId: food.id,
-            };
-          })
-          .filter(f => f !== null),
-      );
-    }, [ids, foodState]);
-
-    return null;
-};
 
 export function MealEdit({navigation, route}: Props): React.JSX.Element {
     const dispatch = useAppDispatch();
 
+    const formRef = useRef<FormikProps<MealForm>>(null);
+
     const {id, newMealId} = route.params;
     const title = id ? 'Edit Meal' : 'Add Meal';
     const mealExist = useAppSelector(findMealById(id || newMealId));
+
+    const ids = useAppSelector(state => state.selection.items);
+    const foodState = useAppSelector(food);
 
     const meal: MealForm = useMemo(() => {
       const newMeal =
@@ -78,22 +52,41 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
       return newMeal || (mealExist ? toMealForm(mealExist) : defaultMeal());
     }, [id, newMealId, mealExist]);
 
-
     useEffect(() => {
-      const selectedIds = meal.items.map(i => i.foodId);
-      dispatch(setSelection(selectedIds));
-
-      if (selectedIds.length === 0) {
-        navigation.navigate('FoodList', {selectable: true});
-      }
-
       return () => {
         dispatch(setSelection([]));
       };
     }, []);
 
+    useEffect(() => {
+        const {setFieldValue, values} = formRef.current!;
+
+        setFieldValue(
+          'items',
+          ids
+            .map(id => {
+              const foodExist = values.items.find(f => f.foodId === id);
+              if (foodExist) {
+                return foodExist;
+              }
+
+              const food = foodState.find(f => f.id === id);
+              if (!food) {
+                return null;
+              }
+
+              return {
+                weight: food.weight.toString(),
+                foodId: food.id,
+              };
+            })
+            .filter(f => f !== null),
+        );
+    }, [ids, foodState, formRef]);
+
     return (
       <Formik
+        innerRef={formRef}
         initialValues={meal}
         validationSchema={MealSchema}
         onSubmit={values => {
@@ -126,13 +119,13 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
               <Text style={typoStyles.heading}>{title}</Text>
               <Button
                 title={'Select Food'}
-                onPress={() => navigation.navigate('FoodList', {selectable: true})}
+                onPress={() =>
+                  navigation.navigate('FoodList', {selectable: true})
+                }
               />
             </View>
             <ScrollView>
               <View style={formStyles.form}>
-                <BusinessLogic />
-
                 <Field name={'items'}>
                   <FieldArray
                     name={'items'}

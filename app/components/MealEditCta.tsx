@@ -1,9 +1,12 @@
 import {Button} from 'react-native';
-import React, {PropsWithChildren, useEffect} from 'react';
+import React, {PropsWithChildren, useMemo} from 'react';
 import {ID} from '../domain/id.ts';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../routes.tsx';
+import {setSelection} from '../features/selectionSlice.tsx';
+import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
+import {meal} from '../store.ts';
 
 type SectionProps = PropsWithChildren<{
   id?: ID;
@@ -14,18 +17,30 @@ export function MealEditCta({id, newMealId}: SectionProps): React.JSX.Element {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const title = id ? 'Edit Meal' : 'Add Meal';
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  const key = newMealId ? 'newMealId' : 'id';
+  const value = newMealId || id;
+
+  const title = useMemo(() => {
     if (newMealId) {
-      navigation.navigate('MealEdit', {newMealId});
+      return 'Copy Meal';
     }
-  }, [newMealId, navigation]);
 
-  return (
-    <Button
-      onPress={() => navigation.navigate('MealEdit', {id})}
-      title={title}
-    />
-  );
+    return id ? 'Edit Meal' : 'Add Meal';
+  }, [id, newMealId]);
+
+  const mealState = useAppSelector(meal);
+
+  const navigateToMealEdit = () => {
+    const meal = mealState.find(meal => meal.id === value);
+
+    dispatch(setSelection(meal ? meal.items.map(i => i.foodId) : []));
+
+    navigation.navigate('MealEdit', {
+      [key]: value,
+    });
+  };
+
+  return <Button onPress={() => navigateToMealEdit()} title={title} />;
 }

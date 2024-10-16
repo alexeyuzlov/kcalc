@@ -12,10 +12,9 @@ import {layoutStyles} from '../styles/layout.tsx';
 
 type SectionProps = PropsWithChildren<{
   item: Meal;
-  copy: () => void;
 }>;
 
-export function MealCard({item, copy}: SectionProps): React.JSX.Element {
+export function MealCard({item}: SectionProps): React.JSX.Element {
   const dispatch = useAppDispatch();
 
   const [expanded, setExpanded] = useState(false);
@@ -59,7 +58,7 @@ export function MealCard({item, copy}: SectionProps): React.JSX.Element {
       {expanded && <View style={{gap: defaultOffset}}>{items}</View>}
 
       <View style={layoutStyles.row}>
-        <Button title="Copy Meal" onPress={copy} />
+        <MealEditCta newMealId={item.id} />
 
         <MealEditCta id={item.id} />
 
