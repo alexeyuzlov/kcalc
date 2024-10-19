@@ -58,6 +58,8 @@ export function FoodCard({
             {item.name}
           </Text>
         </Pressable>
+        <View style={layoutStyles.spacer}></View>
+        <Number value={item.kcal}>kcal</Number>
       </View>
 
       <View style={{flexDirection: 'row', gap: 4}}>
@@ -70,8 +72,6 @@ export function FoodCard({
         <View style={layoutStyles.spacer}></View>
 
         <Number value={item.weight}>grams</Number>
-        <Text>/</Text>
-        <Number value={item.kcal}>kcal</Number>
       </View>
 
       {!readonly && (

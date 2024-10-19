@@ -1,14 +1,14 @@
-import { ID } from './id.ts';
+import {ID} from './id.ts';
 import * as Yup from 'yup';
 
 export interface Food {
-    id: ID;
-    name: string;
-    weight: number;
-    kcal: number;
-    protein: number;
-    fat: number;
-    carbs: number;
+  id: ID;
+  name: string;
+  weight: number;
+  kcal: number;
+  protein: number;
+  fat: number;
+  carbs: number;
 }
 
 export function foodWeighted(food: Food, weight: number): Food {
@@ -32,9 +32,9 @@ export interface FoodForm {
     carbs: string;
 }
 
-export const defaultFood = (): FoodForm => ({
-    name: '',
-    weight: '',
+export const defaultFood = (defaultName?: string): FoodForm => ({
+    name: defaultName || '',
+    weight: '100',
     kcal: '',
     protein: '',
     fat: '',

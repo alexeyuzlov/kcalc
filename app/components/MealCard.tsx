@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useState} from 'react';
+import React, {PropsWithChildren, useMemo, useState} from 'react';
 import {Alert, Button, View} from 'react-native';
 import {Meal} from '../domain/meal.ts';
 import {FoodCard} from './FoodCard.tsx';
@@ -34,18 +34,20 @@ export function MealCard({item}: SectionProps): React.JSX.Element {
 
   const toggleExpand = () => setExpanded(!expanded);
 
-  const items = item.items.map((foodWeighted, index) => {
-    return (
-      foodWeighted.food && (
-        <FoodCard
-          key={foodWeighted.foodId}
-          index={item.items.length > 1 ? index : undefined}
-          item={foodWeighted.food}
-          readonly={true}
-        />
-      )
-    );
-  });
+  const items = useMemo(() => {
+    return item.items.map((foodWeighted, index) => {
+      return (
+        foodWeighted.food && (
+          <FoodCard
+            key={foodWeighted.foodId}
+            index={item.items.length > 1 ? index : undefined}
+            item={foodWeighted.food}
+            readonly={true}
+          />
+        )
+      );
+    });
+  }, [item.items]);
 
   return (
     <View style={cardStyles.containerOut}>

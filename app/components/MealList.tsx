@@ -15,7 +15,7 @@ import {typoStyles} from '../styles/typo.tsx';
 import {MealEditCta} from './MealEditCta.tsx';
 import {DateGroup, dateGroups} from '../domain/date.ts';
 import {formStyles} from '../styles/form.tsx';
-import {mealGroups} from '../domain/meal-groups.ts';
+import {MealGroup, mealGroups} from '../domain/meal-groups.ts';
 import {defaultOffset} from '../styles/variables.tsx';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../routes.tsx';
@@ -26,7 +26,6 @@ import {Select} from './Select.tsx';
 import {ID} from '../domain/id.ts';
 import {cardStyles} from '../styles/card.tsx';
 import {Number} from './Number.tsx';
-import {FoodCard} from './FoodCard.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MealList'>;
 
@@ -36,18 +35,40 @@ export function MealList({navigation}: Props): React.JSX.Element {
 
   const [search, setSearch] = useState<string>('');
   const [dateGroup, setDateGroup] = useState<DateGroup>('day');
-
-  const filteredMeal = search
-    ? mealState.filter(m =>
-        m.name?.toLowerCase().includes(search.toLowerCase()),
-      )
-    : mealState;
+  const [visible, setVisible] = useState<Record<ID, boolean>>({});
 
   const groups = useMemo(() => {
-    return mealGroups(filteredMeal, foodState, dateGroup);
-  }, [filteredMeal, foodState, dateGroup]);
+    return mealGroups(mealState, foodState, dateGroup);
+  }, [mealState, foodState, dateGroup]);
 
-  const [visible, setVisible] = useState<Record<ID, boolean>>({});
+  const filteredGroups: MealGroup[] = useMemo(() => {
+    if (!search) {
+      return groups;
+    }
+
+    const text = search.toLowerCase();
+
+    return groups.reduce((acc, group) => {
+      const data = group.data.filter(m => {
+        if (m.name?.toLowerCase().includes(text)) {
+          return true;
+        }
+
+        return m.items.some(item => {
+          return item.food?.name.toLowerCase().includes(text) ?? false;
+        });
+      });
+
+      if (data.length) {
+        acc.push({
+          ...group,
+          data,
+        });
+      }
+
+      return acc;
+    }, [] as MealGroup[]);
+  }, [groups, search]);
 
   useEffect(() => {
     setSearch('');
@@ -61,14 +82,19 @@ export function MealList({navigation}: Props): React.JSX.Element {
   };
 
   useEffect(() => {
-    if (!groups.length) {
+    if (!filteredGroups.length) {
       return;
     }
 
-    setVisible({
-      [groups[0].id]: true,
-    });
-  }, [groups]);
+    if (!search) {
+      setVisible({
+        [filteredGroups[0].rangeAsString]: true,
+      });
+    } else {
+      const ids = filteredGroups.map(group => group.rangeAsString);
+      setVisible(ids.reduce((acc, id) => ({...acc, [id]: true}), {}));
+    }
+  }, [search, filteredGroups]);
 
   return (
     <View style={styles.container}>
@@ -95,45 +121,40 @@ export function MealList({navigation}: Props): React.JSX.Element {
       </View>
 
       <SectionList
-        sections={groups}
+        sections={filteredGroups}
         keyExtractor={item => item.id}
         stickySectionHeadersEnabled={true}
         contentContainerStyle={{marginBottom: 100}}
         renderSectionHeader={data => (
           <View style={cardStyles.container}>
             <View style={layoutStyles.row}>
-              <Pressable onPress={() => toggleVisible(data.section.id)}>
+              <Pressable
+                onPress={() => toggleVisible(data.section.rangeAsString)}>
                 <Text style={styles.sectionHeading}>
                   {data.section.rangeAsString}
                 </Text>
               </Pressable>
 
-              <View style={layoutStyles.spacer}></View>
+              <View style={layoutStyles.spacer} />
+              <Number value={data.section.summary.kcal}>kcal</Number>
+            </View>
+
+            <View style={{flexDirection: 'row', gap: 4}}>
+              <Number value={data.section.summary.protein} />
+              <Text>/</Text>
+              <Number value={data.section.summary.fat} />
+              <Text>/</Text>
+              <Number value={data.section.summary.carbs} />
+
+              <View style={layoutStyles.spacer} />
 
               <Number value={data.section.summary.weight}>grams</Number>
-              <Text>/</Text>
-              <Number value={data.section.summary.kcal}>kcal</Number>
             </View>
           </View>
         )}
         renderItem={section => {
-          if (visible[section.section.id]) {
+          if (visible[section.section.rangeAsString]) {
             return <MealCard item={section.item} />;
-          }
-
-          return null;
-        }}
-        renderSectionFooter={data => {
-          if (!search && visible[data.section.id]) {
-            return (
-              <View style={styles.sectionFooter}>
-                <FoodCard
-                  item={data.section.summary}
-                  primary={true}
-                  readonly={true}
-                />
-              </View>
-            );
           }
 
           return null;
@@ -144,7 +165,7 @@ export function MealList({navigation}: Props): React.JSX.Element {
           title={'Food List'}
           onPress={() => navigation.navigate('FoodList', {})}
         />
-        <View></View>
+        <View style={layoutStyles.spacer} />
         <View style={layoutStyles.row}>
           <ImportFile />
           <ExportFile />

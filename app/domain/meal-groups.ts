@@ -1,11 +1,9 @@
 import {Meal} from './meal.ts';
 import {DateGroup, dateRange, DateRange, printDateRange} from './date.ts';
 import {Food, foodWeighted} from './food.ts';
-import {generateId, ID} from './id.ts';
-import { summary } from './summary.ts';
+import {summary} from './summary.ts';
 
 export interface MealGroup {
-  id: ID;
   range: DateRange;
   rangeAsString: string;
   data: Meal[];
@@ -54,7 +52,6 @@ export function mealGroups(
 
 function createEmptyGroup(range: DateRange): MealGroup {
     return {
-      id: generateId(),
       range,
       rangeAsString: printDateRange(range),
       data: [],

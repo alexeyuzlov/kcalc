@@ -33,9 +33,9 @@ export function MealEditCta({id, newMealId}: SectionProps): React.JSX.Element {
   const mealState = useAppSelector(meal);
 
   const navigateToMealEdit = () => {
-    const meal = mealState.find(meal => meal.id === value);
+    const exist = mealState.find(m => m.id === value);
 
-    dispatch(setSelection(meal ? meal.items.map(i => i.foodId) : []));
+    dispatch(setSelection(exist ? exist.items.map(i => i.foodId) : []));
 
     navigation.navigate('MealEdit', {
       [key]: value,

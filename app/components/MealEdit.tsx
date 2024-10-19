@@ -4,7 +4,7 @@ import {defaultMeal, MealForm, MealSchema, toMealForm} from '../domain/meal.ts';
 import {formStyles} from '../styles/form.tsx';
 import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
 import {FieldArray, Formik} from 'formik';
-import {findMealById, food} from '../store.ts';
+import {findMealById, food, selection} from '../store.ts';
 import {Field} from './Field.tsx';
 import DatePicker from 'react-native-date-picker';
 import {addMeal, updateMeal} from '../features/mealSlice.tsx';
@@ -32,7 +32,7 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
     const title = id ? 'Edit Meal' : 'Add Meal';
     const mealExist = useAppSelector(findMealById(id || newMealId));
 
-    const ids = useAppSelector(state => state.selection.items);
+    const ids = useAppSelector(selection);
     const foodState = useAppSelector(food);
 
     const meal: MealForm = useMemo(() => {
@@ -50,7 +50,7 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
         })();
 
       return newMeal || (mealExist ? toMealForm(mealExist) : defaultMeal());
-    }, [id, newMealId, mealExist]);
+    }, [newMealId, mealExist]);
 
     useEffect(() => {
       return () => {
@@ -59,29 +59,29 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
     }, []);
 
     useEffect(() => {
-        const {setFieldValue, values} = formRef.current!;
+      const {setFieldValue, values} = formRef.current!;
 
-        setFieldValue(
-          'items',
-          ids
-            .map(id => {
-              const foodExist = values.items.find(f => f.foodId === id);
-              if (foodExist) {
-                return foodExist;
-              }
+      setFieldValue(
+        'items',
+        ids
+          .map(id => {
+            const foodExist = values.items.find(f => f.foodId === id);
+            if (foodExist) {
+              return foodExist;
+            }
 
-              const food = foodState.find(f => f.id === id);
-              if (!food) {
-                return null;
-              }
+            const exist = foodState.find(f => f.id === id);
+            if (!exist) {
+              return null;
+            }
 
-              return {
-                weight: food.weight.toString(),
-                foodId: food.id,
-              };
-            })
-            .filter(f => f !== null),
-        );
+            return {
+              weight: exist.weight.toString(),
+              foodId: exist.id,
+            };
+          })
+          .filter(f => f !== null),
+      );
     }, [ids, foodState, formRef]);
 
     return (

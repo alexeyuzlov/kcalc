@@ -1,7 +1,7 @@
 import React, {PropsWithChildren, useMemo} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
-import { View } from 'react-native';
-import { formStyles } from '../styles/form.tsx';
+import {View} from 'react-native';
+import {formStyles} from '../styles/form.tsx';
 
 type SectionProps = PropsWithChildren<{
   items: {heading: string; value: any}[];
@@ -15,7 +15,10 @@ export function Select({
   onChange,
 }: SectionProps): React.JSX.Element {
   const prepared = useMemo(() => {
-    return items.map(({heading, value}) => ({label: heading, value}));
+    return items.map((item) => ({
+      label: item.heading,
+      value: item.value
+    }));
   }, [items]);
 
   return (

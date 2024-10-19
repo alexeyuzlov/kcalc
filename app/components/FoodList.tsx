@@ -6,7 +6,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {FoodCard} from './FoodCard.tsx';
 import {formStyles} from '../styles/form.tsx';
 import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
@@ -23,6 +23,7 @@ import {
 } from '../features/selectionSlice.tsx';
 import {ImportFile} from './ImportFile.tsx';
 import {ExportFile} from './ExportFile.tsx';
+import {food, selection} from '../store.ts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'FoodList'>;
 
@@ -30,18 +31,26 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
   const dispatch = useAppDispatch();
 
   const selectable = route.params?.selectable || false;
-
-  const food = useAppSelector(state => state.food.items);
-  const selection = useAppSelector(state => state.selection);
-
   const [search, setSearch] = useState<string>('');
+  const foodState = useAppSelector(food);
+  const ids = useAppSelector(selection);
 
-  const filteredFood = search
-    ? food.filter(m => m.name?.toLowerCase().includes(search.toLowerCase()))
-    : food;
+  const filteredFood = useMemo(() => {
+    if (!search) {
+      return foodState;
+    }
+
+    const text = search.toLowerCase();
+
+    return foodState.filter(f => f.name.toLowerCase().includes(text));
+  }, [foodState, search]);
+
+  useEffect(() => {
+    setSearch('');
+  }, [foodState]);
 
   const prepareSelectedIds = (item: {id: ID}) => {
-    if (!selection.items.includes(item.id)) {
+    if (!ids.includes(item.id)) {
       dispatch(addToSelection(item.id));
     } else {
       dispatch(removeFromSelection(item.id));
@@ -52,7 +61,7 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
     <View style={layoutStyles.container}>
       <View style={layoutStyles.header}>
         <Text style={typoStyles.heading}>Food List</Text>
-        <FoodEditCta />
+        <FoodEditCta defaultName={search} />
       </View>
 
       <TextInput
@@ -62,27 +71,30 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
         onChangeText={setSearch}
       />
 
-      <FlatList
-        style={styles.list}
-        data={filteredFood}
-        keyExtractor={item => item.id}
-        contentContainerStyle={{gap: defaultOffset}}
-        renderItem={({item, index}) => (
-          <FoodCard
-            index={index}
-            item={item}
-            selectable={selectable}
-            selected={selection.items.includes(item.id)}
-            select={() => prepareSelectedIds(item)}
-          />
-        )}
-      />
+      <View style={styles.list}>
+        {filteredFood.length === 0 && <FoodEditCta defaultName={search} />}
+
+        <FlatList
+          data={filteredFood}
+          keyExtractor={item => item.id}
+          contentContainerStyle={{gap: defaultOffset}}
+          renderItem={({item, index}) => (
+            <FoodCard
+              index={index}
+              item={item}
+              selectable={selectable}
+              selected={ids.includes(item.id)}
+              select={() => prepareSelectedIds(item)}
+            />
+          )}
+        />
+      </View>
 
       <View style={layoutStyles.footer}>
         {selectable ? (
           <View style={{flex: 1}}>
             <Button
-              title={'Select ' + selection.items.length}
+              title={'Select ' + ids.length}
               onPress={() => navigation.goBack()}
             />
           </View>
@@ -93,7 +105,8 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
           />
         )}
 
-        <View></View>
+        <View style={layoutStyles.spacer} />
+
         <View style={layoutStyles.row}>
           <ImportFile />
           <ExportFile />

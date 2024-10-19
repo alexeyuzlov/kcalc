@@ -1,5 +1,5 @@
 import {Button, ScrollView, Text, TextInput, View} from 'react-native';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {defaultFood, FoodForm, FoodSchema, toFoodForm} from '../domain/food.ts';
 import {formStyles} from '../styles/form.tsx';
 import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
@@ -19,8 +19,12 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
 
   const id = route.params.id;
 
+  const defaultName = useAppSelector(state => state.food.defaultName);
+
   const exist = useAppSelector(state => findFoodById(state, id));
-  const food = exist ? toFoodForm(exist) : defaultFood();
+  const food = useMemo(() => {
+    return exist ? toFoodForm(exist) : defaultFood(defaultName);
+  }, [defaultName, exist]);
 
   const submitForm = (values: FoodForm) => {
     // console.info('Food', values);
@@ -58,18 +62,6 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                   value={values.name}
                   onChangeText={handleChange('name')}
                   onBlur={handleBlur('name')}
-                />
-              </Field>
-
-              <Field label={'Weight'} name={'weight'}>
-                <TextInput
-                  style={formStyles.input}
-                  inputMode={'numeric'}
-                  maxLength={7}
-                  value={values.weight}
-                  onChangeText={handleChange('weight')}
-                  onBlur={handleBlur('weight')}
-                  placeholder={'0'}
                 />
               </Field>
 
@@ -117,6 +109,18 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                   value={values.carbs}
                   onChangeText={handleChange('carbs')}
                   onBlur={handleBlur('carbs')}
+                  placeholder={'0'}
+                />
+              </Field>
+
+              <Field label={'Weight'} name={'weight'}>
+                <TextInput
+                  style={formStyles.input}
+                  inputMode={'numeric'}
+                  maxLength={7}
+                  value={values.weight}
+                  onChangeText={handleChange('weight')}
+                  onBlur={handleBlur('weight')}
                   placeholder={'0'}
                 />
               </Field>

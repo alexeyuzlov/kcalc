@@ -51,6 +51,7 @@ export type AppDispatch = typeof store.dispatch;
 
 export const meal = (state: RootState) => state.meal.items;
 export const food = (state: RootState) => state.food.items;
+export const selection = (state: RootState) => state.selection.items;
 
 export const findMealById = (id?: ID) => createSelector([meal, food], (meal, food) => {
     if (!id) {
