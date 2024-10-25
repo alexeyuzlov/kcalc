@@ -1,19 +1,9 @@
 import { Meal } from './meal.ts';
-import { Food, foodWeighted } from './food.ts';
-import { generateId } from './id.ts';
+import { emptyFood, Food, foodWeighted } from './food.ts';
 
 export function summary(items: Meal[], name: string): Food {
     const foods: Food[] = [];
-
-    const result: Food = {
-        id: generateId(),
-        name,
-        weight: 0,
-        kcal: 0,
-        protein: 0,
-        fat: 0,
-        carbs: 0,
-    };
+    const result: Food = emptyFood(name);
 
     items.forEach(item => {
         item.items.forEach(item => {
@@ -37,6 +27,7 @@ export function summary(items: Meal[], name: string): Food {
             protein: prev.protein + food.protein,
             fat: prev.fat + food.fat,
             carbs: prev.carbs + food.carbs,
+            fiber: prev.fiber! + (food.fiber ? food.fiber : 0),
         };
     }, result);
 }

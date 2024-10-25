@@ -1,13 +1,13 @@
-import {StyleSheet} from 'react-native';
-import {dangerColor, defaultOffset} from './variables.tsx';
+import { StyleSheet } from 'react-native';
+import { dangerColor, defaultOffset } from './variables.tsx';
 
 const input = {
-  height: 40,
-  borderColor: 'gray',
-  borderWidth: 1,
-  backgroundColor: 'white',
-  borderRadius: 4,
-  paddingHorizontal: defaultOffset,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    borderRadius: 4,
+    paddingHorizontal: defaultOffset,
 };
 
 export const formStyles = StyleSheet.create({

@@ -1,7 +1,7 @@
-import {Alert, Button, Share} from 'react-native';
-import React, {PropsWithChildren} from 'react';
-import {useAppSelector} from '../domain/hooks.ts';
-import {food, meal} from '../store.ts';
+import { Alert, Button, Share } from 'react-native';
+import React, { PropsWithChildren } from 'react';
+import { useAppSelector } from '../domain/hooks.ts';
+import { food, meal } from '../store.ts';
 
 type SectionProps = PropsWithChildren<{}>;
 
@@ -31,5 +31,5 @@ export function ExportFile({}: SectionProps): React.JSX.Element {
     }
   };
 
-  return <Button title={'Save'} onPress={exportFile} />;
+  return <Button title={'Save'} onPress={exportFile}/>;
 }

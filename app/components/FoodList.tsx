@@ -1,125 +1,147 @@
-import {
-  Button,
-  FlatList,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import React, {useEffect, useMemo, useState} from 'react';
-import {FoodCard} from './FoodCard.tsx';
-import {formStyles} from '../styles/form.tsx';
-import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
-import {ID} from '../domain/id.ts';
-import {FoodEditCta} from './FoodEditCta.tsx';
-import {layoutStyles} from '../styles/layout.tsx';
-import {typoStyles} from '../styles/typo.tsx';
-import {defaultOffset} from '../styles/variables.tsx';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../routes.tsx';
-import {
-  addToSelection,
-  removeFromSelection,
-} from '../features/selectionSlice.tsx';
-import {ImportFile} from './ImportFile.tsx';
-import {ExportFile} from './ExportFile.tsx';
-import {food, selection} from '../store.ts';
+import { Button, FlatList, StyleSheet, Text, TextInput, View, } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FoodCard } from './FoodCard.tsx';
+import { formStyles } from '../styles/form.tsx';
+import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
+import { ID } from '../domain/id.ts';
+import { FoodEditCta } from './FoodEditCta.tsx';
+import { layoutStyles } from '../styles/layout.tsx';
+import { typoStyles } from '../styles/typo.tsx';
+import { defaultOffset } from '../styles/variables.tsx';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../routes.tsx';
+import { addToSelection, removeFromSelection, } from '../features/selectionSlice.tsx';
+import { ImportFile } from './ImportFile.tsx';
+import { ExportFile } from './ExportFile.tsx';
+import { food, meal, selection } from '../store.ts';
+import { groupByUsing, mealGroups } from '../domain/meal-groups.ts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'FoodList'>;
 
 export function FoodList({navigation, route}: Props): React.JSX.Element {
-  const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
-  const selectable = route.params?.selectable || false;
-  const [search, setSearch] = useState<string>('');
-  const foodState = useAppSelector(food);
-  const ids = useAppSelector(selection);
+    const selectable = route.params?.selectable || false;
+    const [search, setSearch] = useState<string>('');
 
-  const filteredFood = useMemo(() => {
-    if (!search) {
-      return foodState;
-    }
+    const mealState = useAppSelector(meal);
+    const foodState = useAppSelector(food);
 
-    const text = search.toLowerCase();
+    const ids = useAppSelector(selection);
 
-    return foodState.filter(f => f.name.toLowerCase().includes(text));
-  }, [foodState, search]);
+    const groups = useMemo(() => {
+        return mealGroups(mealState, foodState, 'day');
+    }, [mealState, foodState]);
 
-  useEffect(() => {
-    setSearch('');
-  }, [foodState]);
+    const sortedFood = useMemo(() => {
+        const products = groupByUsing(groups, foodState);
 
-  const prepareSelectedIds = (item: {id: ID}) => {
-    if (!ids.includes(item.id)) {
-      dispatch(addToSelection(item.id));
-    } else {
-      dispatch(removeFromSelection(item.id));
-    }
-  };
+        // sort by ids and total use
+        return Object.values(products)
+            .sort((a, b) => {
+                if (ids.includes(a.id) && !ids.includes(b.id)) {
+                    return -1;
+                }
 
-  return (
-    <View style={layoutStyles.container}>
-      <View style={layoutStyles.header}>
-        <Text style={typoStyles.heading}>Food List</Text>
-        <FoodEditCta defaultName={search} />
-      </View>
+                if (!ids.includes(a.id) && ids.includes(b.id)) {
+                    return 1;
+                }
 
-      <TextInput
-        style={formStyles.search}
-        placeholder="Search"
-        value={search}
-        onChangeText={setSearch}
-      />
+                return b.totalUse - a.totalUse;
+            });
+    }, [groups, foodState, ids]);
 
-      <View style={styles.list}>
-        {filteredFood.length === 0 && <FoodEditCta defaultName={search} />}
+    const filteredFood = useMemo(() => {
+        if (!search) {
+            return sortedFood;
+        }
 
-        <FlatList
-          data={filteredFood}
-          keyExtractor={item => item.id}
-          contentContainerStyle={{gap: defaultOffset}}
-          renderItem={({item, index}) => (
-            <FoodCard
-              index={index}
-              item={item}
-              selectable={selectable}
-              selected={ids.includes(item.id)}
-              select={() => prepareSelectedIds(item)}
+        const text = search.toLowerCase();
+
+        return sortedFood.filter(f => f.name.toLowerCase().includes(text));
+    }, [sortedFood, search]);
+
+    useEffect(() => {
+        setSearch('');
+    }, [sortedFood]);
+
+    useEffect(() => {
+        if (ids.length === 0) {
+            setSearch('');
+        }
+    }, [ids]);
+
+    const prepareSelectedIds = (item: { id: ID }) => {
+        if (!ids.includes(item.id)) {
+            dispatch(addToSelection(item.id));
+        } else {
+            dispatch(removeFromSelection(item.id));
+        }
+    };
+
+    return (
+        <View style={layoutStyles.container}>
+            <View style={layoutStyles.header}>
+                <Text style={typoStyles.heading}>Food List</Text>
+                <FoodEditCta defaultName={search}/>
+            </View>
+
+            <TextInput
+                style={formStyles.search}
+                placeholder="Search"
+                value={search}
+                onChangeText={setSearch}
             />
-          )}
-        />
-      </View>
 
-      <View style={layoutStyles.footer}>
-        {selectable ? (
-          <View style={{flex: 1}}>
-            <Button
-              title={'Select ' + ids.length}
-              onPress={() => navigation.goBack()}
-            />
-          </View>
-        ) : (
-          <Button
-            title={'Meal List'}
-            onPress={() => navigation.navigate('MealList')}
-          />
-        )}
+            <View style={styles.list}>
+                {filteredFood.length === 0 && <FoodEditCta defaultName={search}/>}
 
-        <View style={layoutStyles.spacer} />
+                <FlatList
+                    data={filteredFood}
+                    keyExtractor={item => item.id}
+                    contentContainerStyle={{gap: defaultOffset}}
+                    renderItem={({item, index}) => (
+                        <FoodCard
+                            index={index}
+                            item={item}
+                            selectable={selectable}
+                            selected={ids.includes(item.id)}
+                            select={() => prepareSelectedIds(item)}
+                        />
+                    )}
+                />
+            </View>
 
-        <View style={layoutStyles.row}>
-          <ImportFile />
-          <ExportFile />
+            <View style={layoutStyles.footer}>
+                {selectable ? (
+                    <View style={{flex: 1}}>
+                        <Button
+                            title={'Select ' + ids.length}
+                            onPress={() => navigation.goBack()}
+                        />
+                    </View>
+                ) : (
+                    <Button
+                        title={'Meal List'}
+                        onPress={() => navigation.navigate('MealList')}
+                    />
+                )}
+
+                <View style={layoutStyles.spacer}/>
+
+                <View style={layoutStyles.row}>
+                    <ImportFile/>
+                    <ExportFile/>
+                </View>
+            </View>
         </View>
-      </View>
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
-  list: {
-    flex: 1,
-    gap: defaultOffset,
-    margin: defaultOffset,
-  },
+    list: {
+        flex: 1,
+        gap: defaultOffset,
+        margin: defaultOffset,
+    },
 });

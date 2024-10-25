@@ -1,94 +1,101 @@
-import React, {PropsWithChildren} from 'react';
-import {Alert, Button, Pressable, Switch, Text, View} from 'react-native';
-import {Food} from '../domain/food.ts';
-import {Number} from './Number.tsx';
-import {cardStyles} from '../styles/card.tsx';
-import {removeFood} from '../features/foodSlice.tsx';
-import {useAppDispatch} from '../domain/hooks.ts';
-import {ID} from '../domain/id.ts';
-import {layoutStyles} from '../styles/layout.tsx';
-import {typoStyles} from '../styles/typo.tsx';
-import {FoodEditCta} from './FoodEditCta.tsx';
-import {dangerColor} from '../styles/variables.tsx';
+import React, { PropsWithChildren } from 'react';
+import { Alert, Button, Pressable, Switch, Text, View } from 'react-native';
+import { Food } from '../domain/food.ts';
+import { Number } from './Number.tsx';
+import { cardStyles } from '../styles/card.tsx';
+import { removeFood } from '../features/foodSlice.tsx';
+import { useAppDispatch } from '../domain/hooks.ts';
+import { ID } from '../domain/id.ts';
+import { layoutStyles } from '../styles/layout.tsx';
+import { typoStyles } from '../styles/typo.tsx';
+import { FoodEditCta } from './FoodEditCta.tsx';
+import { dangerColor } from '../styles/variables.tsx';
 
 type SectionProps = PropsWithChildren<{
-  index?: number;
-  item: Food;
-  primary?: boolean;
-  selectable?: boolean;
-  selected?: boolean;
-  select?: (id: ID) => void;
-  readonly?: boolean;
-  onPress?: () => void;
+    index?: number;
+    item: Food;
+    primary?: boolean;
+    selectable?: boolean;
+    selected?: boolean;
+    select?: (id: ID) => void;
+    readonly?: boolean;
+    onPress?: () => void;
 }>;
 
 export function FoodCard({
-  index,
-  item,
-  primary,
-  selectable,
-  selected,
-  select,
-  readonly,
-  onPress,
-}: SectionProps): React.JSX.Element {
-  const dispatch = useAppDispatch();
+                             index,
+                             item,
+                             primary,
+                             selectable,
+                             selected,
+                             select,
+                             readonly,
+                             onPress,
+                         }: SectionProps): React.JSX.Element {
+    const dispatch = useAppDispatch();
 
-  const confirmRemove = () =>
-    Alert.alert('Confirm action', 'Are you sure?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Remove',
-        onPress: () => dispatch(removeFood(item.id)),
-        style: 'destructive',
-      },
-    ]);
+    const confirmRemove = () =>
+        Alert.alert('Confirm action', 'Are you sure?', [
+            {
+                text: 'Cancel',
+                style: 'cancel',
+            },
+            {
+                text: 'Remove',
+                onPress: () => dispatch(removeFood(item.id)),
+                style: 'destructive',
+            },
+        ]);
 
-  return (
-    <View style={cardStyles.container}>
-      <View style={{...layoutStyles.row, alignItems: 'flex-start'}}>
-        <Pressable onPress={onPress}>
-          <Text
-            style={primary ? typoStyles.headingPrimary : typoStyles.heading}
-          >
-            {index !== undefined ? `${index + 1}. ` : ''}
-            {item.name}
-          </Text>
-        </Pressable>
-        <View style={layoutStyles.spacer}></View>
-        <Number value={item.kcal}>kcal</Number>
-      </View>
+    return (
+        <View style={cardStyles.container}>
+            <View style={{...layoutStyles.row, alignItems: 'flex-start'}}>
+                <Pressable style={layoutStyles.rowText} onPress={onPress}>
+                    <Text
+                        style={primary ? typoStyles.headingPrimary : typoStyles.heading}
+                    >
+                        {index !== undefined ? `${index + 1}. ` : ''}
+                        {item.name}
+                        {item.totalUse ? ` (${item.totalUse})` : ''}
+                    </Text>
+                </Pressable>
+                <View style={layoutStyles.spacer}></View>
+                <Number value={item.kcal}>kcal</Number>
+            </View>
 
-      <View style={{flexDirection: 'row', gap: 4}}>
-        <Number value={item.protein} />
-        <Text>/</Text>
-        <Number value={item.fat} />
-        <Text>/</Text>
-        <Number value={item.carbs} />
+            <View style={{flexDirection: 'row', gap: 4}}>
+                <Number value={item.protein}/>
+                <Text>/</Text>
+                <Number value={item.fat}/>
+                <Text>/</Text>
+                <Number value={item.carbs}/>
 
-        <View style={layoutStyles.spacer}></View>
+                <View style={{...layoutStyles.row, gap: 0}}>
+                    <Text>(</Text>
+                    <Number value={item.fiber || 0}/>
+                    <Text>)</Text>
+                </View>
 
-        <Number value={item.weight}>grams</Number>
-      </View>
+                <View style={layoutStyles.spacer}></View>
 
-      {!readonly && (
-        <View style={layoutStyles.row}>
-          {selectable && (
-            <Switch onValueChange={() => select?.(item.id)} value={selected} />
-          )}
+                <Number value={item.weight}>grams</Number>
+            </View>
 
-          <FoodEditCta id={item.id} />
+            {!readonly && (
+                <View style={layoutStyles.row}>
+                    {selectable && (
+                        <Switch onValueChange={() => select?.(item.id)} value={selected}/>
+                    )}
 
-          <Button
-            color={dangerColor}
-            onPress={confirmRemove}
-            title="Delete Food"
-          />
+                    <FoodEditCta id={item.id}/>
+
+                    <Button
+                        color={dangerColor}
+                        onPress={confirmRemove}
+                        title="Delete Food"
+                    />
+                </View>
+            )}
         </View>
-      )}
-    </View>
-  );
+    );
 }

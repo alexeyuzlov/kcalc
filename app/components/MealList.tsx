@@ -1,31 +1,23 @@
-import {
-  Button,
-  Pressable,
-  SectionList,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import React, {useEffect, useMemo, useState} from 'react';
-import {MealCard} from './MealCard.tsx';
-import {useAppSelector} from '../domain/hooks.ts';
-import {layoutStyles} from '../styles/layout.tsx';
-import {typoStyles} from '../styles/typo.tsx';
-import {MealEditCta} from './MealEditCta.tsx';
-import {DateGroup, dateGroups} from '../domain/date.ts';
-import {formStyles} from '../styles/form.tsx';
-import {MealGroup, mealGroups} from '../domain/meal-groups.ts';
-import {defaultOffset} from '../styles/variables.tsx';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../routes.tsx';
-import {ImportFile} from './ImportFile.tsx';
-import {ExportFile} from './ExportFile.tsx';
-import {food, meal} from '../store.ts';
-import {Select} from './Select.tsx';
-import {ID} from '../domain/id.ts';
-import {cardStyles} from '../styles/card.tsx';
-import {Number} from './Number.tsx';
+import { Button, Pressable, SectionList, StyleSheet, Text, TextInput, View, } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { MealCard } from './MealCard.tsx';
+import { useAppSelector } from '../domain/hooks.ts';
+import { layoutStyles } from '../styles/layout.tsx';
+import { typoStyles } from '../styles/typo.tsx';
+import { MealEditCta } from './MealEditCta.tsx';
+import { DateGroup, dateGroups } from '../domain/date.ts';
+import { formStyles } from '../styles/form.tsx';
+import { MealGroup, mealGroups } from '../domain/meal-groups.ts';
+import { defaultOffset } from '../styles/variables.tsx';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../routes.tsx';
+import { ImportFile } from './ImportFile.tsx';
+import { ExportFile } from './ExportFile.tsx';
+import { food, meal } from '../store.ts';
+import { Select } from './Select.tsx';
+import { ID } from '../domain/id.ts';
+import { cardStyles } from '../styles/card.tsx';
+import { Number } from './Number.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MealList'>;
 
@@ -97,81 +89,92 @@ export function MealList({navigation}: Props): React.JSX.Element {
   }, [search, filteredGroups]);
 
   return (
-    <View style={styles.container}>
-      <View style={layoutStyles.header}>
-        <Text style={typoStyles.heading}>Meal List</Text>
-        <MealEditCta />
-      </View>
+      <View style={styles.container}>
+        <View style={layoutStyles.header}>
+          <Text style={typoStyles.heading}>Meal List</Text>
+          <MealEditCta/>
+        </View>
 
-      <View style={{...layoutStyles.row, margin: defaultOffset}}>
-        <TextInput
-          style={{...formStyles.input, flex: 3}}
-          placeholder="Search by meal name"
-          value={search}
-          onChangeText={setSearch}
-        />
-
-        <View style={{flex: 2}}>
-          <Select
-            value={dateGroup}
-            onChange={setDateGroup}
-            items={dateGroups}
+        <View style={{...layoutStyles.row, margin: defaultOffset}}>
+          <TextInput
+              style={{...formStyles.input, flex: 3}}
+              placeholder="Search by meal name"
+              value={search}
+              onChangeText={setSearch}
           />
-        </View>
-      </View>
 
-      <SectionList
-        sections={filteredGroups}
-        keyExtractor={item => item.id}
-        stickySectionHeadersEnabled={true}
-        contentContainerStyle={{marginBottom: 100}}
-        renderSectionHeader={data => (
-          <View style={cardStyles.container}>
-            <View style={layoutStyles.row}>
-              <Pressable
-                onPress={() => toggleVisible(data.section.rangeAsString)}>
-                <Text style={styles.sectionHeading}>
-                  {data.section.rangeAsString}
-                </Text>
-              </Pressable>
-
-              <View style={layoutStyles.spacer} />
-              <Number value={data.section.summary.kcal}>kcal</Number>
-            </View>
-
-            <View style={{flexDirection: 'row', gap: 4}}>
-              <Number value={data.section.summary.protein} />
-              <Text>/</Text>
-              <Number value={data.section.summary.fat} />
-              <Text>/</Text>
-              <Number value={data.section.summary.carbs} />
-
-              <View style={layoutStyles.spacer} />
-
-              <Number value={data.section.summary.weight}>grams</Number>
-            </View>
+          <View style={{flex: 2}}>
+            <Select
+                value={dateGroup}
+                onChange={setDateGroup}
+                items={dateGroups}
+            />
           </View>
-        )}
-        renderItem={section => {
-          if (visible[section.section.rangeAsString]) {
-            return <MealCard item={section.item} />;
-          }
+        </View>
 
-          return null;
-        }}
-      />
-      <View style={layoutStyles.footer}>
-        <Button
-          title={'Food List'}
-          onPress={() => navigation.navigate('FoodList', {})}
+        <SectionList
+            sections={filteredGroups}
+            keyExtractor={item => item.id}
+            stickySectionHeadersEnabled={true}
+            contentContainerStyle={{marginBottom: 100}}
+            renderSectionHeader={data => (
+                <View style={cardStyles.container}>
+                  <View style={layoutStyles.row}>
+                    <Pressable
+                        style={layoutStyles.rowText}
+                        onPress={() => toggleVisible(data.section.rangeAsString)}
+                    >
+                      <Text style={styles.sectionHeading}>
+                        {data.section.rangeAsString}
+                      </Text>
+                    </Pressable>
+
+                    <View style={layoutStyles.spacer}/>
+
+                    <Number value={data.section.summary.kcal}>kcal</Number>
+                  </View>
+
+                  <View style={{flexDirection: 'row', gap: 4}}>
+                    <Number value={data.section.summary.protein}/>
+                    <Text>/</Text>
+                    <Number value={data.section.summary.fat}/>
+                    <Text>/</Text>
+                    <Number value={data.section.summary.carbs}/>
+
+                    <View style={layoutStyles.spacer}/>
+
+                    <Number value={data.section.summary.weight}>grams</Number>
+                  </View>
+                </View>
+            )}
+            renderItem={section => {
+              if (visible[section.section.rangeAsString]) {
+                return <MealCard item={section.item}/>;
+              }
+
+              return null;
+            }}
         />
-        <View style={layoutStyles.spacer} />
-        <View style={layoutStyles.row}>
-          <ImportFile />
-          <ExportFile />
+        <View style={layoutStyles.footer}>
+          <View style={layoutStyles.row}>
+            <Button
+                title={'Food List'}
+                onPress={() => navigation.navigate('FoodList', {})}
+            />
+
+            <Button
+                title={'Stats'}
+                onPress={() => navigation.navigate('Stats')}
+            />
+          </View>
+
+          <View style={layoutStyles.spacer}/>
+          <View style={layoutStyles.row}>
+            <ImportFile/>
+            <ExportFile/>
+          </View>
         </View>
       </View>
-    </View>
   );
 }
 

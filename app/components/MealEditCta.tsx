@@ -1,46 +1,46 @@
-import {Button} from 'react-native';
-import React, {PropsWithChildren, useMemo} from 'react';
-import {ID} from '../domain/id.ts';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../routes.tsx';
-import {setSelection} from '../features/selectionSlice.tsx';
-import {useAppDispatch, useAppSelector} from '../domain/hooks.ts';
-import {meal} from '../store.ts';
+import { Button } from 'react-native';
+import React, { PropsWithChildren, useMemo } from 'react';
+import { ID } from '../domain/id.ts';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../routes.tsx';
+import { setSelection } from '../features/selectionSlice.tsx';
+import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
+import { meal } from '../store.ts';
 
 type SectionProps = PropsWithChildren<{
-  id?: ID;
-  newMealId?: ID;
+    id?: ID;
+    newMealId?: ID;
 }>;
 
 export function MealEditCta({id, newMealId}: SectionProps): React.JSX.Element {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
-  const key = newMealId ? 'newMealId' : 'id';
-  const value = newMealId || id;
+    const key = newMealId ? 'newMealId' : 'id';
+    const value = newMealId || id;
 
-  const title = useMemo(() => {
-    if (newMealId) {
-      return 'Copy Meal';
-    }
+    const title = useMemo(() => {
+        if (newMealId) {
+            return 'Copy Meal';
+        }
 
-    return id ? 'Edit Meal' : 'Add Meal';
-  }, [id, newMealId]);
+        return id ? 'Edit Meal' : 'Add Meal';
+    }, [id, newMealId]);
 
-  const mealState = useAppSelector(meal);
+    const mealState = useAppSelector(meal);
 
-  const navigateToMealEdit = () => {
-    const exist = mealState.find(m => m.id === value);
+    const navigateToMealEdit = () => {
+        const exist = mealState.find(m => m.id === value);
 
-    dispatch(setSelection(exist ? exist.items.map(i => i.foodId) : []));
+        dispatch(setSelection(exist ? exist.items.map(i => i.foodId) : []));
 
-    navigation.navigate('MealEdit', {
-      [key]: value,
-    });
-  };
+        navigation.navigate('MealEdit', {
+            [key]: value,
+        });
+    };
 
-  return <Button onPress={() => navigateToMealEdit()} title={title} />;
+    return <Button onPress={() => navigateToMealEdit()} title={title}/>;
 }

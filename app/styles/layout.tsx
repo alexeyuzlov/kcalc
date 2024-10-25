@@ -1,5 +1,5 @@
-import {ImageStyle, StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import {borderColor, defaultOffset} from './variables.tsx';
+import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import { borderColor, defaultOffset } from './variables.tsx';
 
 const row: ViewStyle | TextStyle | ImageStyle = {
   flexDirection: 'row',
@@ -21,6 +21,9 @@ export const layoutStyles = StyleSheet.create({
     flex: 1,
   },
   row,
+  rowText: {
+    flexShrink: 1,
+  },
   header: {
     ...row,
     padding: defaultOffset,

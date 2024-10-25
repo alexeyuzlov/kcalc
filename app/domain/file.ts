@@ -6,4 +6,4 @@ export const loadFile = async (uri: string) => {
     } catch (err) {
         console.error(err);
     }
-}
+};

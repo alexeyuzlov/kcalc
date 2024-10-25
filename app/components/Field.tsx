@@ -1,7 +1,7 @@
-import React, {PropsWithChildren} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {ErrorMessage} from 'formik';
-import {formStyles} from '../styles/form.tsx';
+import React, { PropsWithChildren } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { ErrorMessage } from 'formik';
+import { formStyles } from '../styles/form.tsx';
 
 type SectionProps = PropsWithChildren<{
   children: React.ReactNode;
@@ -10,27 +10,27 @@ type SectionProps = PropsWithChildren<{
 }>;
 
 export function Field({
-  children,
-  label,
-  name,
-}: SectionProps): React.JSX.Element {
+                        children,
+                        label,
+                        name,
+                      }: SectionProps): React.JSX.Element {
   return (
-    <View>
-      {label && <Text>{label}</Text>}
-      {children}
-      {name && (
-        <ErrorMessage
-          name={name}
-          render={(value: any) => {
-            if (typeof value !== 'string') {
-              return null;
-            }
+      <View>
+        {label && <Text>{label}</Text>}
+        {children}
+        {name && (
+            <ErrorMessage
+                name={name}
+                render={(value: any) => {
+                  if (typeof value !== 'string') {
+                    return null;
+                  }
 
-            return <Text style={formStyles.error}>{value}</Text>;
-          }}
-        />
-      )}
-    </View>
+                  return <Text style={formStyles.error}>{value}</Text>;
+                }}
+            />
+        )}
+      </View>
   );
 }
 
