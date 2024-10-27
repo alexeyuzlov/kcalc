@@ -14,6 +14,7 @@ export interface Meal {
   date: ISODate;
   name?: string;
   items: FoodWeighted[];
+  summary?: Food;
 }
 
 export type FoodWeightedForm = {

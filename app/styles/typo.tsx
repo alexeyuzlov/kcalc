@@ -11,4 +11,7 @@ export const typoStyles = StyleSheet.create({
         fontSize: 16,
         color: dangerColor,
     },
+    special: {
+        fontWeight: 'bold',
+    }
 });

@@ -11,13 +11,14 @@ import { MealGroup, mealGroups } from '../domain/meal-groups.ts';
 import { defaultOffset } from '../styles/variables.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
-import { ImportFile } from './ImportFile.tsx';
-import { ExportFile } from './ExportFile.tsx';
+import { FileImport } from './FileImport.tsx';
+import { FileExport } from './FileExport.tsx';
 import { food, meal } from '../store.ts';
 import { Select } from './Select.tsx';
 import { ID } from '../domain/id.ts';
 import { cardStyles } from '../styles/card.tsx';
 import { Number } from './Number.tsx';
+import { FoodInfo } from './FoodInfo.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MealList'>;
 
@@ -119,7 +120,7 @@ export function MealList({navigation}: Props): React.JSX.Element {
             contentContainerStyle={{marginBottom: 100}}
             renderSectionHeader={data => (
                 <View style={cardStyles.container}>
-                  <View style={layoutStyles.row}>
+                  <View style={{...layoutStyles.row, alignItems: 'flex-start'}}>
                     <Pressable
                         style={layoutStyles.rowText}
                         onPress={() => toggleVisible(data.section.rangeAsString)}
@@ -128,23 +129,11 @@ export function MealList({navigation}: Props): React.JSX.Element {
                         {data.section.rangeAsString}
                       </Text>
                     </Pressable>
-
                     <View style={layoutStyles.spacer}/>
-
-                    <Number value={data.section.summary.kcal}>kcal</Number>
+                    <Number special={true} value={data.section.summary.kcal}>kcal</Number>
                   </View>
 
-                  <View style={{flexDirection: 'row', gap: 4}}>
-                    <Number value={data.section.summary.protein}/>
-                    <Text>/</Text>
-                    <Number value={data.section.summary.fat}/>
-                    <Text>/</Text>
-                    <Number value={data.section.summary.carbs}/>
-
-                    <View style={layoutStyles.spacer}/>
-
-                    <Number value={data.section.summary.weight}>grams</Number>
-                  </View>
+                  <FoodInfo item={data.section.summary}/>
                 </View>
             )}
             renderItem={section => {
@@ -170,8 +159,8 @@ export function MealList({navigation}: Props): React.JSX.Element {
 
           <View style={layoutStyles.spacer}/>
           <View style={layoutStyles.row}>
-            <ImportFile/>
-            <ExportFile/>
+            <FileImport/>
+            <FileExport/>
           </View>
         </View>
       </View>

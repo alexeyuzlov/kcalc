@@ -3,13 +3,13 @@ import { FoodCard } from './FoodCard.tsx';
 import { Meal } from '../domain/meal.ts';
 import { summary } from '../domain/summary.ts';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
     name: string;
     items: Meal[];
     onPress?: () => void;
 }>;
 
-export function Summary({items, name, onPress}: SectionProps): React.JSX.Element {
+export function Summary({items, name, onPress}: Props): React.JSX.Element {
     const prepared = useMemo(() => {
         return summary(items, name);
     }, [items, name]);

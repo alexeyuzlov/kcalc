@@ -7,7 +7,7 @@ import { ID } from './id.ts';
 export interface MealGroup {
     range: DateRange;
     rangeAsString: string;
-    data: Meal[];
+    data: Array<Meal & { summary: Food }>;
     summary: Food;
 }
 
@@ -23,13 +23,18 @@ export function mealGroups(
         )
         .reduce((acc, meal) => {
             // TODO reuse findMealById
-            const calendarMeal: Meal = {
+            const preparedMeal: Meal = {
                 ...meal,
                 items: meal.items.map(item => {
                     const food = foodState.find(f => f.id === item.foodId);
                     return food ? {...item, food: foodWeighted(food, item.weight)} : item;
                 }),
             };
+
+            const calendarMeal: Meal & { summary: Food } = {
+                ...preparedMeal,
+                summary: summary([preparedMeal], 'Summary'),
+            }
 
             const range = dateRange(new Date(calendarMeal.date), dateGroup);
 

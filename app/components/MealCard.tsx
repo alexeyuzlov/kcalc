@@ -10,11 +10,11 @@ import { Summary } from './Summary.tsx';
 import { dangerColor, defaultOffset } from '../styles/variables.tsx';
 import { layoutStyles } from '../styles/layout.tsx';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
     item: Meal;
 }>;
 
-export function MealCard({item}: SectionProps): React.JSX.Element {
+export function MealCard({item}: Props): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const [expanded, setExpanded] = useState(false);

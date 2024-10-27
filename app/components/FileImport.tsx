@@ -6,9 +6,9 @@ import { loadFile } from '../domain/file.ts';
 import { importFood } from '../features/foodSlice.tsx';
 import { importMeal } from '../features/mealSlice.tsx';
 
-type SectionProps = PropsWithChildren<{}>;
+type Props = PropsWithChildren<{}>;
 
-export function ImportFile({}: SectionProps): React.JSX.Element {
+export function FileImport({}: Props): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const importFile = async () => {

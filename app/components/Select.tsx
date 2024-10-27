@@ -3,7 +3,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import { View } from 'react-native';
 import { formStyles } from '../styles/form.tsx';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
     items: { heading: string; value: any }[];
     value: any;
     onChange: (value: any) => void;
@@ -13,7 +13,7 @@ export function Select({
                            items,
                            value,
                            onChange,
-                       }: SectionProps): React.JSX.Element {
+                       }: Props): React.JSX.Element {
     const prepared = useMemo(() => {
         return items.map((item) => ({
             label: item.heading,

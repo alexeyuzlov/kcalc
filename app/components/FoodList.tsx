@@ -11,8 +11,8 @@ import { defaultOffset } from '../styles/variables.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
 import { addToSelection, removeFromSelection, } from '../features/selectionSlice.tsx';
-import { ImportFile } from './ImportFile.tsx';
-import { ExportFile } from './ExportFile.tsx';
+import { FileImport } from './FileImport.tsx';
+import { FileExport } from './FileExport.tsx';
 import { food, meal, selection } from '../store.ts';
 import { groupByUsing, mealGroups } from '../domain/meal-groups.ts';
 
@@ -121,17 +121,24 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
                         />
                     </View>
                 ) : (
-                    <Button
-                        title={'Meal List'}
-                        onPress={() => navigation.navigate('MealList')}
-                    />
+                    <View style={layoutStyles.row}>
+                        <Button
+                            title={'Meal List'}
+                            onPress={() => navigation.navigate('MealList')}
+                        />
+
+                        <Button
+                            title={'Stats'}
+                            onPress={() => navigation.navigate('Stats')}
+                        />
+                    </View>
                 )}
 
                 <View style={layoutStyles.spacer}/>
 
                 <View style={layoutStyles.row}>
-                    <ImportFile/>
-                    <ExportFile/>
+                    <FileImport/>
+                    <FileExport/>
                 </View>
             </View>
         </View>

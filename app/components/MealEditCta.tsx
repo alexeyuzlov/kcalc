@@ -8,12 +8,12 @@ import { setSelection } from '../features/selectionSlice.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { meal } from '../store.ts';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
     id?: ID;
     newMealId?: ID;
 }>;
 
-export function MealEditCta({id, newMealId}: SectionProps): React.JSX.Element {
+export function MealEditCta({id, newMealId}: Props): React.JSX.Element {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 

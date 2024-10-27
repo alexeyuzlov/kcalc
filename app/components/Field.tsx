@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ErrorMessage } from 'formik';
 import { formStyles } from '../styles/form.tsx';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
   children: React.ReactNode;
   label?: string;
   name?: string;
@@ -13,7 +13,7 @@ export function Field({
                         children,
                         label,
                         name,
-                      }: SectionProps): React.JSX.Element {
+                      }: Props): React.JSX.Element {
   return (
       <View>
         {label && <Text>{label}</Text>}

@@ -1,18 +1,20 @@
 import { Text } from 'react-native';
 import React, { PropsWithChildren, useMemo } from 'react';
+import { typoStyles } from '../styles/typo.tsx';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
     value: number;
     children?: React.ReactNode;
+    special?: boolean;
 }>;
 
-export function Number({value, children}: SectionProps): React.JSX.Element {
+export function Number({value, children, special}: Props): React.JSX.Element {
     const prepared = useMemo(() => {
         return value.toFixed(2);
     }, [value]);
 
     return (
-        <Text>
+        <Text style={special ? typoStyles.special: ''}>
             {prepared}{children ? ' ' + children : ''}
         </Text>
     );

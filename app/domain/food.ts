@@ -56,7 +56,7 @@ export const defaultFood = (defaultName?: string): FoodForm => ({
     protein: '',
     fat: '',
     carbs: '',
-    fiber: '',
+    fiber: '0',
 });
 
 export function toFoodForm(food: Food): FoodForm {
@@ -67,7 +67,7 @@ export function toFoodForm(food: Food): FoodForm {
         protein: food.protein.toString(),
         fat: food.fat.toString(),
         carbs: food.carbs.toString(),
-        fiber: food.fiber ? food.fiber.toString() : '',
+        fiber: food.fiber ? food.fiber.toString() : '0',
     };
 }
 

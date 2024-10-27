@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { setNewNameForFood } from '../features/foodSlice.tsx';
 import { useAppDispatch } from '../domain/hooks.ts';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
     id?: ID;
     defaultName?: string;
 }>;
@@ -15,7 +15,7 @@ type SectionProps = PropsWithChildren<{
 export function FoodEditCta({
                                 id,
                                 defaultName,
-                            }: SectionProps): React.JSX.Element {
+                            }: Props): React.JSX.Element {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 

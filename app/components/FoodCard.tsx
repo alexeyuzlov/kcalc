@@ -10,8 +10,9 @@ import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
 import { FoodEditCta } from './FoodEditCta.tsx';
 import { dangerColor } from '../styles/variables.tsx';
+import { FoodInfo } from './FoodInfo.tsx';
 
-type SectionProps = PropsWithChildren<{
+type Props = PropsWithChildren<{
     index?: number;
     item: Food;
     primary?: boolean;
@@ -31,7 +32,7 @@ export function FoodCard({
                              select,
                              readonly,
                              onPress,
-                         }: SectionProps): React.JSX.Element {
+                         }: Props): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const confirmRemove = () =>
@@ -59,27 +60,12 @@ export function FoodCard({
                         {item.totalUse ? ` (${item.totalUse})` : ''}
                     </Text>
                 </Pressable>
-                <View style={layoutStyles.spacer}></View>
-                <Number value={item.kcal}>kcal</Number>
-            </View>
-
-            <View style={{flexDirection: 'row', gap: 4}}>
-                <Number value={item.protein}/>
-                <Text>/</Text>
-                <Number value={item.fat}/>
-                <Text>/</Text>
-                <Number value={item.carbs}/>
-
-                <View style={{...layoutStyles.row, gap: 0}}>
-                    <Text>(</Text>
-                    <Number value={item.fiber || 0}/>
-                    <Text>)</Text>
-                </View>
 
                 <View style={layoutStyles.spacer}></View>
-
-                <Number value={item.weight}>grams</Number>
+                <Number special={true} value={item.kcal}>kcal</Number>
             </View>
+
+            <FoodInfo item={item}/>
 
             {!readonly && (
                 <View style={layoutStyles.row}>
