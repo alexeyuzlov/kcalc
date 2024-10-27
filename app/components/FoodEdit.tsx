@@ -1,4 +1,4 @@
-import { Button, ScrollView, Text, TextInput, View } from 'react-native';
+import { Button, ScrollView, Text, View } from 'react-native';
 import React, { useMemo } from 'react';
 import { defaultFood, FoodForm, FoodSchema, toFoodForm } from '../domain/food.ts';
 import { formStyles } from '../styles/form.tsx';
@@ -11,6 +11,8 @@ import { typoStyles } from '../styles/typo.tsx';
 import { primaryColor } from '../styles/variables.tsx';
 import { RootStackParamList } from '../routes.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Container } from './Container.tsx';
+import { Input } from './Input.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'FoodEdit'>;
 
@@ -47,7 +49,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
             validationSchema={FoodSchema}
             onSubmit={submitForm}>
             {({handleChange, handleBlur, handleSubmit, values}) => (
-                <View style={layoutStyles.container}>
+              <Container>
                     <View style={layoutStyles.header}>
                         <Text style={typoStyles.heading}>
                             {id ? 'Edit Food' : 'Add Food'}
@@ -57,8 +59,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                     <ScrollView>
                         <View style={formStyles.form}>
                             <Field label={'Name'} name={'name'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     value={values.name}
                                     onChangeText={handleChange('name')}
                                     onBlur={handleBlur('name')}
@@ -66,8 +67,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                             </Field>
 
                             <Field label={'Kcal'} name={'kcal'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     inputMode={'numeric'}
                                     maxLength={7}
                                     value={values.kcal}
@@ -78,8 +78,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                             </Field>
 
                             <Field label={'Protein'} name={'protein'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     inputMode={'numeric'}
                                     maxLength={7}
                                     value={values.protein}
@@ -90,8 +89,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                             </Field>
 
                             <Field label={'Fat'} name={'fat'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     inputMode={'numeric'}
                                     maxLength={7}
                                     value={values.fat}
@@ -102,8 +100,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                             </Field>
 
                             <Field label={'Carbs'} name={'carbs'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     inputMode={'numeric'}
                                     maxLength={7}
                                     value={values.carbs}
@@ -114,8 +111,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                             </Field>
 
                             <Field label={'Weight'} name={'weight'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     inputMode={'numeric'}
                                     maxLength={7}
                                     value={values.weight}
@@ -126,8 +122,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                             </Field>
 
                             <Field label={'Fiber'} name={'fiber'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     inputMode={'numeric'}
                                     maxLength={7}
                                     value={values.fiber}
@@ -148,7 +143,7 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                             />
                         </View>
                     </View>
-                </View>
+              </Container>
             )}
         </Formik>
     );

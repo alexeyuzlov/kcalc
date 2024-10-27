@@ -6,6 +6,7 @@ import { RootStackParamList } from '../routes.tsx';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { setNewNameForFood } from '../features/foodSlice.tsx';
 import { useAppDispatch } from '../domain/hooks.ts';
+import { primaryColor } from '../styles/variables.tsx';
 
 type Props = PropsWithChildren<{
     id?: ID;
@@ -33,7 +34,7 @@ export function FoodEditCta({
 
     return (
         <View>
-            <Button onPress={() => navigateToFoodEdit()} title={title}/>
+            <Button color={primaryColor} onPress={() => navigateToFoodEdit()} title={title} />
         </View>
     );
 }

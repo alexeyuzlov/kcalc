@@ -11,18 +11,18 @@ export function styles() {
                 margin: 0;
                 padding: 0;
             }
-        
+
             table {
                 width: 100%;
                 border-collapse: collapse;
                 table-layout: fixed;;
                 text-align: left;
-            } 
-            
+            }
+
             td {
                 border: 1px solid #ddd;
             }
-        </style>    
+        </style>
     `;
 }
 
@@ -34,17 +34,17 @@ export function foodCells(food: Food[], colspan = 1, bold = false, customName?: 
             <td colspan="${colspan}">
                 ${bold ? `<b>${name}</b>` : name}
             </td>
-            <td>${product.weight.toFixed(2)}</td>
             <td>${product.kcal.toFixed(2)}</td>
             <td>${product.protein.toFixed(2)}</td>
             <td>${product.fat.toFixed(2)}</td>
             <td>${product.carbs.toFixed(2)}</td>
             <td>${(product.fiber || 0).toFixed(2)}</td>
+            <td>${product.weight.toFixed(2)}</td>
         `;
     }).join('');
 }
 
-export function mealRow(meal: Meal & { summary: Food }) {
+export function mealRow(meal: Meal & {summary: Food}) {
     return `${meal.items.map((item, index) => (`
         ${meal.name
         ? `
@@ -88,12 +88,12 @@ export function foodTable(food: Food[]) {
         <thead>
             <tr>
                 <th>Product</th>
-                <th>Weight</th>
                 <th>Kcal</th>
                 <th>Protein</th>
                 <th>Fat</th>
                 <th>Carbs</th>
                 <th>Fiber</th>
+                <th>Weight</th>
             </tr>
         <tbody>
             ${food.map((product) => (`
@@ -119,12 +119,12 @@ export const mealTable = (mealGroups: MealGroup[]) => {
         <thead>
             <tr>
                 <th colspan="2">Name</th>
-                <th>Weight</th>
                 <th>Kcal</th>
                 <th>Protein</th>
                 <th>Fat</th>
                 <th>Carbs</th>
                 <th>Fiber</th>
+                <th>Weight</th>
             </tr>
         <tbody>
             ${mealGroups.map((group) => (`

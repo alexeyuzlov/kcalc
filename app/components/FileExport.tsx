@@ -5,6 +5,7 @@ import { food, meal } from '../store.ts';
 import Share from 'react-native-share';
 import { printDate } from '../domain/date.ts';
 import { PATH_TO_INTERNAL_FILE, saveInternalFile } from '../domain/file.ts';
+import { primaryColor } from '../styles/variables.tsx';
 
 type Props = PropsWithChildren<{}>;
 
@@ -21,7 +22,7 @@ export function FileExport({}: Props): React.JSX.Element {
         const options = {
             url: `file://${PATH_TO_INTERNAL_FILE}`,
             type: 'text/plain',
-            message: `Kcal Data ${printDate(new Date())}`,
+            message: `Kcalc Data ${printDate(new Date())}`,
         };
 
         try {
@@ -31,5 +32,5 @@ export function FileExport({}: Props): React.JSX.Element {
         }
     };
 
-    return <Button title={'Save'} onPress={exportFile}/>;
+    return <Button color={primaryColor} title={'Save'} onPress={exportFile} />;
 }

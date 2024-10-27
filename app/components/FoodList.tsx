@@ -1,20 +1,21 @@
-import { Button, FlatList, StyleSheet, Text, TextInput, View, } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FoodCard } from './FoodCard.tsx';
-import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { ID } from '../domain/id.ts';
 import { FoodEditCta } from './FoodEditCta.tsx';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
-import { defaultOffset } from '../styles/variables.tsx';
+import { defaultOffset, primaryColor } from '../styles/variables.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
-import { addToSelection, removeFromSelection, } from '../features/selectionSlice.tsx';
+import { addToSelection, removeFromSelection } from '../features/selectionSlice.tsx';
 import { FileImport } from './FileImport.tsx';
 import { FileExport } from './FileExport.tsx';
 import { food, meal, selection } from '../store.ts';
 import { groupByUsing, mealGroups } from '../domain/meal-groups.ts';
+import { Container } from './Container.tsx';
+import { Input } from './Input.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'FoodList'>;
 
@@ -71,7 +72,7 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
         }
     }, [ids]);
 
-    const prepareSelectedIds = (item: { id: ID }) => {
+    const prepareSelectedIds = (item: {id: ID}) => {
         if (!ids.includes(item.id)) {
             dispatch(addToSelection(item.id));
         } else {
@@ -80,21 +81,21 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
     };
 
     return (
-        <View style={layoutStyles.container}>
+        <Container>
             <View style={layoutStyles.header}>
                 <Text style={typoStyles.heading}>Food List</Text>
-                <FoodEditCta defaultName={search}/>
+                <FoodEditCta defaultName={search} />
             </View>
 
-            <TextInput
-                style={formStyles.search}
+            <Input
+                style={{margin: defaultOffset, marginBottom: 0}}
                 placeholder="Search"
                 value={search}
                 onChangeText={setSearch}
             />
 
             <View style={styles.list}>
-                {filteredFood.length === 0 && <FoodEditCta defaultName={search}/>}
+                {filteredFood.length === 0 && <FoodEditCta defaultName={search} />}
 
                 <FlatList
                     data={filteredFood}
@@ -116,6 +117,7 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
                 {selectable ? (
                     <View style={{flex: 1}}>
                         <Button
+                            color={primaryColor}
                             title={'Select ' + ids.length}
                             onPress={() => navigation.goBack()}
                         />
@@ -123,25 +125,27 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
                 ) : (
                     <View style={layoutStyles.row}>
                         <Button
+                            color={primaryColor}
                             title={'Meal List'}
                             onPress={() => navigation.navigate('MealList')}
                         />
 
                         <Button
+                            color={primaryColor}
                             title={'Stats'}
                             onPress={() => navigation.navigate('Stats')}
                         />
                     </View>
                 )}
 
-                <View style={layoutStyles.spacer}/>
+                <View style={layoutStyles.spacer} />
 
                 <View style={layoutStyles.row}>
-                    <FileImport/>
-                    <FileExport/>
+                    <FileImport />
+                    <FileExport />
                 </View>
             </View>
-        </View>
+        </Container>
     );
 }
 

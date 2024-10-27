@@ -1,4 +1,4 @@
-import { Button, ScrollView, Text, TextInput, View } from 'react-native';
+import { Button, ScrollView, Text, View } from 'react-native';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { defaultMeal, MealForm, MealSchema, toMealForm } from '../domain/meal.ts';
 import { formStyles } from '../styles/form.tsx';
@@ -11,12 +11,14 @@ import { addMeal, updateMeal } from '../features/mealSlice.tsx';
 import { generateId } from '../domain/id.ts';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
-import { defaultOffset } from '../styles/variables.tsx';
+import { defaultOffset, primaryColor } from '../styles/variables.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
-import { removeFromSelection, } from '../features/selectionSlice.tsx';
+import { removeFromSelection } from '../features/selectionSlice.tsx';
 import { FoodWeighted } from './FoodWeighted.tsx';
 import { FormikProps } from 'formik/dist/types';
+import { Container } from './Container.tsx';
+import { Input } from './Input.tsx';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MealEdit'>;
 
@@ -111,10 +113,11 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
                 navigation.goBack();
             }}>
             {({setFieldValue, handleChange, handleBlur, handleSubmit, values}) => (
-                <View style={layoutStyles.container}>
+                <Container>
                     <View style={layoutStyles.header}>
                         <Text style={typoStyles.heading}>{title}</Text>
                         <Button
+                            color={primaryColor}
                             title={'Select Food'}
                             onPress={() =>
                                 navigation.navigate('FoodList', {selectable: true})
@@ -134,8 +137,7 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
                                                 <Field
                                                     label={'Weight'}
                                                     name={`items[${index}].weight`}>
-                                                    <TextInput
-                                                        style={formStyles.input}
+                                                    <Input
                                                         inputMode={'numeric'}
                                                         maxLength={7}
                                                         value={values.items[index].weight}
@@ -162,8 +164,7 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
                             </Field>
 
                             <Field label={'Meal Name (for search)'} name={'name'}>
-                                <TextInput
-                                    style={formStyles.input}
+                                <Input
                                     value={values.name}
                                     onChangeText={handleChange('name')}
                                     onBlur={handleBlur('name')}
@@ -183,10 +184,10 @@ export function MealEdit({navigation, route}: Props): React.JSX.Element {
 
                     <View style={layoutStyles.footer}>
                         <View style={{flex: 1}}>
-                            <Button title={'Save'} onPress={handleSubmit}/>
+                            <Button color={primaryColor} title={'Save'} onPress={handleSubmit} />
                         </View>
                     </View>
-                </View>
+                </Container>
             )}
         </Formik>
     );

@@ -1,7 +1,7 @@
 import RNFS from 'react-native-fs';
 
-export const FILE_DATA_NAME = 'kcal-data.json';
-export const REPORT_FILE_NAME = 'kcal-report.html';
+export const FILE_DATA_NAME = 'kcalc-data.json';
+export const REPORT_FILE_NAME = 'kcalc-report.html';
 export const PATH_TO_INTERNAL_FILE = `${RNFS.DocumentDirectoryPath}/${FILE_DATA_NAME}`;
 export const PATH_TO_REPORT_FILE_NAME = `${RNFS.DocumentDirectoryPath}/${REPORT_FILE_NAME}`;
 
@@ -13,12 +13,12 @@ export const loadFile = async (uri: string) => {
     }
 };
 
-export const saveInternalFile = async ({path, content}: { path: string, content: string }) => {
+export const saveInternalFile = async ({path, content}: {path: string, content: string}) => {
     try {
         await RNFS.writeFile(
             path,
             content,
-            'utf8'
+            'utf8',
         );
     } catch (err: any) {
         console.error(err.message);

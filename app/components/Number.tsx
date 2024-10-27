@@ -14,7 +14,7 @@ export function Number({value, children, special}: Props): React.JSX.Element {
     }, [value]);
 
     return (
-        <Text style={special ? typoStyles.special: ''}>
+        <Text style={special ? typoStyles.textSpecial : ''}>
             {prepared}{children ? ' ' + children : ''}
         </Text>
     );

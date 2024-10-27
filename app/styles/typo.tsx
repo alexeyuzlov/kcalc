@@ -1,17 +1,19 @@
 import { StyleSheet } from 'react-native';
-import { dangerColor } from './variables.tsx';
-
+import { secondaryColor } from './variables.tsx';
 
 export const typoStyles = StyleSheet.create({
     heading: {
         fontSize: 16,
-        color: '#000',
     },
     headingPrimary: {
         fontSize: 16,
-        color: dangerColor,
+        color: secondaryColor,
     },
-    special: {
+    text: {
+        fontSize: 14,
+    },
+    textSpecial: {
+        fontSize: 14,
         fontWeight: 'bold',
-    }
+    },
 });

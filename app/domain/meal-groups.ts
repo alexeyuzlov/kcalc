@@ -7,7 +7,7 @@ import { ID } from './id.ts';
 export interface MealGroup {
     range: DateRange;
     rangeAsString: string;
-    data: Array<Meal & { summary: Food }>;
+    data: Array<Meal & {summary: Food}>;
     summary: Food;
 }
 
@@ -31,10 +31,10 @@ export function mealGroups(
                 }),
             };
 
-            const calendarMeal: Meal & { summary: Food } = {
+            const calendarMeal: Meal & {summary: Food} = {
                 ...preparedMeal,
                 summary: summary([preparedMeal], 'Summary'),
-            }
+            };
 
             const range = dateRange(new Date(calendarMeal.date), dateGroup);
 
@@ -56,7 +56,7 @@ export function mealGroups(
         }, [] as MealGroup[]);
 }
 
-export function groupByUsing(groups: MealGroup[], foodState: Food[]): Record<ID, Food & { totalUse: number }> {
+export function groupByUsing(groups: MealGroup[], foodState: Food[]): Record<ID, Food & {totalUse: number}> {
     const products: Record<ID, Food & {totalUse: number}> = {};
 
     groups.forEach(group => {

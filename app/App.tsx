@@ -16,44 +16,44 @@ import { Stats } from './components/Stats.tsx';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App(): React.JSX.Element {
-  return (
-      <SafeAreaView style={layoutStyles.container}>
-        <StatusBar/>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <NavigationContainer>
-              <Stack.Navigator initialRouteName={'MealList'}>
-                <Stack.Screen
-                    name="MealList"
-                    component={MealList}
-                    options={{headerShown: false}}
-                />
-                <Stack.Screen
-                    name="FoodList"
-                    component={FoodList}
-                    options={{headerShown: false}}
-                />
-                <Stack.Screen
-                    name="FoodEdit"
-                    component={FoodEdit}
-                    options={{headerShown: false}}
-                />
-                <Stack.Screen
-                    name="MealEdit"
-                    component={MealEdit}
-                    options={{headerShown: false}}
-                />
-                <Stack.Screen
-                    name="Stats"
-                    component={Stats}
-                    options={{headerShown: false}}
-                />
-              </Stack.Navigator>
-            </NavigationContainer>
-          </PersistGate>
-        </Provider>
-      </SafeAreaView>
-  );
+    return (
+        <SafeAreaView style={layoutStyles.container}>
+            <StatusBar />
+            <Provider store={store}>
+                <PersistGate loading={null} persistor={persistor}>
+                    <NavigationContainer>
+                        <Stack.Navigator initialRouteName={'MealList'}>
+                            <Stack.Screen
+                                name="MealList"
+                                component={MealList}
+                                options={{headerShown: false}}
+                            />
+                            <Stack.Screen
+                                name="FoodList"
+                                component={FoodList}
+                                options={{headerShown: false}}
+                            />
+                            <Stack.Screen
+                                name="FoodEdit"
+                                component={FoodEdit}
+                                options={{headerShown: false}}
+                            />
+                            <Stack.Screen
+                                name="MealEdit"
+                                component={MealEdit}
+                                options={{headerShown: false}}
+                            />
+                            <Stack.Screen
+                                name="Stats"
+                                component={Stats}
+                                options={{headerShown: false}}
+                            />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </PersistGate>
+            </Provider>
+        </SafeAreaView>
+    );
 }
 
 export default App;

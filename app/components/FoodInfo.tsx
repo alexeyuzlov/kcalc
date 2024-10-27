@@ -10,16 +10,16 @@ type Props = PropsWithChildren<{
 
 export function FoodInfo({item}: Props): React.JSX.Element {
     return (
-        <View style={{flexDirection: 'row', gap: 4}}>
-            <Number value={item.protein}/>
+        <View style={{...layoutStyles.row, gap: 4}}>
+            <Number value={item.protein} />
             <Text>/</Text>
-            <Number value={item.fat}/>
+            <Number value={item.fat} />
             <Text>/</Text>
-            <Number value={item.carbs}/>
+            <Number value={item.carbs} />
 
             <View style={{...layoutStyles.row, gap: 0}}>
                 <Text>(</Text>
-                <Number value={item.fiber || 0}/>
+                <Number value={item.fiber || 0} />
                 <Text>)</Text>
             </View>
 

@@ -7,6 +7,7 @@ import { RootStackParamList } from '../routes.tsx';
 import { setSelection } from '../features/selectionSlice.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { meal } from '../store.ts';
+import { primaryColor } from '../styles/variables.tsx';
 
 type Props = PropsWithChildren<{
     id?: ID;
@@ -42,5 +43,5 @@ export function MealEditCta({id, newMealId}: Props): React.JSX.Element {
         });
     };
 
-    return <Button onPress={() => navigateToMealEdit()} title={title}/>;
+    return <Button color={primaryColor} onPress={() => navigateToMealEdit()} title={title} />;
 }

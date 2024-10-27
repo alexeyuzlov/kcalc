@@ -26,19 +26,19 @@ export const foodSlice = createSlice({
             state.items = [item, ...state.items];
             state.defaultName = '';
         },
-        updateFood: (state: FoodState, action: PayloadAction<{ id: ID; body: Partial<Food> }>) => {
+        updateFood: (state: FoodState, action: PayloadAction<{id: ID; body: Partial<Food>}>) => {
             state.items = state.items.map(item => item.id === action.payload.id ? {...item, ...action.payload.body} : item);
             state.defaultName = '';
         },
         removeFood: (state: FoodState, action: PayloadAction<ID>) => {
             state.items = state.items.filter(food => food.id !== action.payload);
         },
-        importFood: (state: FoodState, action: PayloadAction<{ food: Food[] }>) => {
+        importFood: (state: FoodState, action: PayloadAction<{food: Food[]}>) => {
             state.items = action.payload.food;
         },
         setNewNameForFood: (state: FoodState, action: PayloadAction<string>) => {
             state.defaultName = action.payload;
-        }
+        },
     },
 });
 

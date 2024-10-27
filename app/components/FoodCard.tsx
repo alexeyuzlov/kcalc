@@ -2,15 +2,15 @@ import React, { PropsWithChildren } from 'react';
 import { Alert, Button, Pressable, Switch, Text, View } from 'react-native';
 import { Food } from '../domain/food.ts';
 import { Number } from './Number.tsx';
-import { cardStyles } from '../styles/card.tsx';
 import { removeFood } from '../features/foodSlice.tsx';
 import { useAppDispatch } from '../domain/hooks.ts';
 import { ID } from '../domain/id.ts';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
 import { FoodEditCta } from './FoodEditCta.tsx';
-import { dangerColor } from '../styles/variables.tsx';
+import { primaryColor, secondaryColor } from '../styles/variables.tsx';
 import { FoodInfo } from './FoodInfo.tsx';
+import { Card } from './Card.tsx';
 
 type Props = PropsWithChildren<{
     index?: number;
@@ -49,7 +49,7 @@ export function FoodCard({
         ]);
 
     return (
-        <View style={cardStyles.container}>
+        <Card>
             <View style={{...layoutStyles.row, alignItems: 'flex-start'}}>
                 <Pressable style={layoutStyles.rowText} onPress={onPress}>
                     <Text
@@ -61,27 +61,31 @@ export function FoodCard({
                     </Text>
                 </Pressable>
 
-                <View style={layoutStyles.spacer}></View>
+                <View style={layoutStyles.spacer} />
                 <Number special={true} value={item.kcal}>kcal</Number>
             </View>
 
-            <FoodInfo item={item}/>
+            <FoodInfo item={item} />
 
             {!readonly && (
                 <View style={layoutStyles.row}>
                     {selectable && (
-                        <Switch onValueChange={() => select?.(item.id)} value={selected}/>
+                        <Switch
+                            thumbColor={(selected ? primaryColor : 'gray')}
+                            onValueChange={() => select?.(item.id)}
+                            value={selected}
+                        />
                     )}
 
-                    <FoodEditCta id={item.id}/>
+                    <FoodEditCta id={item.id} />
 
                     <Button
-                        color={dangerColor}
+                        color={secondaryColor}
                         onPress={confirmRemove}
                         title="Delete Food"
                     />
                 </View>
             )}
-        </View>
+        </Card>
     );
 }
