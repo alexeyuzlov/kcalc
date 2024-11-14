@@ -1,17 +1,18 @@
 import React from 'react';
-import { StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import { TextInputProps } from 'react-native/Libraries/Components/TextInput/TextInput';
 import { defaultOffset } from '../styles/variables.tsx';
+import { useAppSelector } from '../domain/hooks.ts';
 
 export function Input(props: TextInputProps): React.JSX.Element {
-    const colorScheme = useColorScheme();
+    const theme = useAppSelector(state => state.settings.theme);
 
     const formStyles = StyleSheet.create({
         input: {
             height: 40,
             borderColor: 'gray',
             borderWidth: 1,
-            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff',
+            backgroundColor: theme === 'dark' ? '#000' : '#fff',
             borderRadius: 4,
             paddingHorizontal: defaultOffset,
         },

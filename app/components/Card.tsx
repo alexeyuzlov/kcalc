@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from 'react';
-import { StyleSheet, useColorScheme, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { defaultOffset } from '../styles/variables.tsx';
+import { useAppSelector } from '../domain/hooks.ts';
 
 type Props = PropsWithChildren<{
     children?: React.ReactNode;
@@ -11,7 +12,7 @@ export function Card({
                          children,
                          out,
                      }: Props): React.JSX.Element {
-    const colorScheme = useColorScheme();
+    const theme = useAppSelector(state => state.settings.theme);
 
     const container = {
         padding: defaultOffset,
@@ -22,7 +23,7 @@ export function Card({
         container: {
             ...container,
             borderRadius: 4,
-            backgroundColor: colorScheme === 'dark' ? '#333' : '#e6e6e6',
+            backgroundColor: theme === 'dark' ? '#333' : '#e6e6e6',
         },
         containerOut: container,
     });

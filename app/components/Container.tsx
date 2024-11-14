@@ -1,5 +1,6 @@
 import React, { PropsWithChildren } from 'react';
-import { StyleSheet, useColorScheme, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { useAppSelector } from '../domain/hooks.ts';
 
 type Props = PropsWithChildren<{
     children?: React.ReactNode;
@@ -8,13 +9,13 @@ type Props = PropsWithChildren<{
 export function Container({
                               children,
                           }: Props): React.JSX.Element {
-    const colorScheme = useColorScheme();
+    const theme = useAppSelector(state => state.settings.theme);
 
     const containerStyles = StyleSheet.create({
         container: {
             flex: 1,
             flexDirection: 'column',
-            backgroundColor: colorScheme === 'dark' ? '#111' : '#eee',
+            backgroundColor: theme === 'dark' ? '#111' : '#eee',
         },
     });
 

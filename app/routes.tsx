@@ -13,4 +13,5 @@ export type RootStackParamList = {
         newMealId?: ID;
     };
     Stats: undefined;
+    Settings: undefined;
 };

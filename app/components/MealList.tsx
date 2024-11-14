@@ -10,9 +10,7 @@ import { MealGroup, mealGroups } from '../domain/meal-groups.ts';
 import { defaultOffset, primaryColor } from '../styles/variables.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
-import { FileImport } from './FileImport.tsx';
-import { FileExport } from './FileExport.tsx';
-import { food, meal } from '../store.ts';
+import { food, meal } from '../features/store.ts';
 import { Select } from './Select.tsx';
 import { ID } from '../domain/id.ts';
 import { Number } from './Number.tsx';
@@ -162,8 +160,11 @@ export function MealList({navigation}: Props): React.JSX.Element {
 
                 <View style={layoutStyles.spacer} />
                 <View style={layoutStyles.row}>
-                    <FileImport />
-                    <FileExport />
+                    <Button
+                        color={primaryColor}
+                        title={'Settings'}
+                        onPress={() => navigation.navigate('Settings')}
+                    />
                 </View>
             </View>
         </Container>

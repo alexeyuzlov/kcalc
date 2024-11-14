@@ -1,8 +1,9 @@
 import { combineReducers, configureStore, createSelector } from '@reduxjs/toolkit';
-import foodReducer from './features/foodSlice.tsx';
-import mealReducer from './features/mealSlice.tsx';
-import selectionReducer from './features/selectionSlice.tsx';
-import { ID } from './domain/id.ts';
+import foodReducer from './foodSlice.tsx';
+import mealReducer from './mealSlice.tsx';
+import selectionReducer from './selectionSlice.tsx';
+import settingsReducer from './settingsSlice.tsx';
+import { ID } from '../domain/id.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
@@ -10,13 +11,16 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    blacklist: ['selection'],
+    blacklist: [
+        'selection',
+    ],
 };
 
 const root = combineReducers({
     food: foodReducer,
     meal: mealReducer,
     selection: selectionReducer,
+    settings: settingsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, root);

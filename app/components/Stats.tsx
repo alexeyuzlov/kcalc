@@ -1,18 +1,16 @@
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, ScrollView, Text, View } from 'react-native';
 import React, { useMemo, useState } from 'react';
 import { layoutStyles } from '../styles/layout.tsx';
 import { typoStyles } from '../styles/typo.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
-import { food, meal } from '../store.ts';
+import { food, meal } from '../features/store.ts';
 import { useAppSelector } from '../domain/hooks.ts';
 import { groupByUsing, MealGroup, mealGroups } from '../domain/meal-groups.ts';
 import { emptyFood, Food } from '../domain/food.ts';
 import { defaultOffset, primaryColor } from '../styles/variables.tsx';
 import { FoodCard } from './FoodCard.tsx';
 import { DateGroup, printDate } from '../domain/date.ts';
-import { FileImport } from './FileImport.tsx';
-import { FileExport } from './FileExport.tsx';
 import { mealTable } from '../domain/report.ts';
 import { PATH_TO_REPORT_FILE_NAME, saveInternalFile } from '../domain/file.ts';
 import Share from 'react-native-share';
@@ -31,6 +29,7 @@ function average(name: string, groups: MealGroup[]): Food {
         result.fat += group.summary.fat;
         result.carbs += group.summary.carbs;
         result.fiber = result.fiber! + group.summary.fiber!;
+        result.salt = result.salt! + group.summary.salt!;
     });
 
     const days = groups.length || 1;
@@ -43,6 +42,7 @@ function average(name: string, groups: MealGroup[]): Food {
         fat: result.fat / days,
         carbs: result.carbs / days,
         fiber: result.fiber! / days,
+        salt: result.salt! / days,
     };
 }
 
@@ -140,12 +140,13 @@ export function Stats({navigation, route}: Props): React.JSX.Element {
 
                 <View style={layoutStyles.spacer} />
                 <View style={layoutStyles.row}>
-                    <FileImport />
-                    <FileExport />
+                    <Button
+                        color={primaryColor}
+                        title={'Settings'}
+                        onPress={() => navigation.navigate('Settings')}
+                    />
                 </View>
             </View>
         </Container>
     );
 }
-
-const styles = StyleSheet.create({});

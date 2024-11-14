@@ -28,6 +28,7 @@ export function summary(items: Meal[], name: string): Food {
             fat: prev.fat + food.fat,
             carbs: prev.carbs + food.carbs,
             fiber: prev.fiber! + (food.fiber ? food.fiber : 0),
+            salt: prev.salt! + (food.salt ? food.salt : 0),
         };
     }, result);
 }

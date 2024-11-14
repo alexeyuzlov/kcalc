@@ -39,6 +39,7 @@ export function foodCells(food: Food[], colspan = 1, bold = false, customName?: 
             <td>${product.fat.toFixed(2)}</td>
             <td>${product.carbs.toFixed(2)}</td>
             <td>${(product.fiber || 0).toFixed(2)}</td>
+            <td>${(product.salt || 0).toFixed(2)}</td>
             <td>${product.weight.toFixed(2)}</td>
         `;
     }).join('');
@@ -93,6 +94,7 @@ export function foodTable(food: Food[]) {
                 <th>Fat</th>
                 <th>Carbs</th>
                 <th>Fiber</th>
+                <th>Salt</th>
                 <th>Weight</th>
             </tr>
         <tbody>
@@ -124,6 +126,7 @@ export const mealTable = (mealGroups: MealGroup[]) => {
                 <th>Fat</th>
                 <th>Carbs</th>
                 <th>Fiber</th>
+                <th>Salt</th>
                 <th>Weight</th>
             </tr>
         <tbody>

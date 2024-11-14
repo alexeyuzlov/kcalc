@@ -25,7 +25,7 @@ export function FoodEditCta({
     const title = id ? 'Edit Food' : 'Add Food';
 
     const navigateToFoodEdit = () => {
-        if (defaultName) {
+        if (typeof defaultName === 'string') {
             dispatch(setNewNameForFood(defaultName));
         }
 

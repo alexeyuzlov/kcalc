@@ -52,7 +52,7 @@ export const MealSchema = Yup.object().shape({
     date: Yup.date().required(),
     items: Yup.array().of(
         Yup.object().shape({
-            weight: Yup.number().required().min(0).max(1000).positive(),
+            weight: Yup.number().required().min(0).max(9999).positive(),
             foodId: Yup.string().required(),
         }),
     ).min(1),

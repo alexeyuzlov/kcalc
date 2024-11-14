@@ -10,6 +10,7 @@ export interface Food {
     fat: number;
     carbs: number;
     fiber?: number;
+    salt?: number;
     totalUse?: number;
 }
 
@@ -23,6 +24,7 @@ export function emptyFood(name: string): Food {
         fat: 0,
         carbs: 0,
         fiber: 0,
+        salt: 0,
     };
 }
 
@@ -35,6 +37,7 @@ export function foodWeighted(food: Food, weight: number): Food {
         fat: food.fat * weight / food.weight,
         carbs: food.carbs * weight / food.weight,
         fiber: food.fiber ? food.fiber * weight / food.weight : 0,
+        salt: food.salt ? food.salt * weight / food.weight : 0,
     };
 }
 
@@ -47,6 +50,7 @@ export interface FoodForm {
     fat: string;
     carbs: string;
     fiber?: string;
+    salt?: string;
 }
 
 export const defaultFood = (defaultName?: string): FoodForm => ({
@@ -57,6 +61,7 @@ export const defaultFood = (defaultName?: string): FoodForm => ({
     fat: '',
     carbs: '',
     fiber: '0',
+    salt: '0',
 });
 
 export function toFoodForm(food: Food): FoodForm {
@@ -68,6 +73,7 @@ export function toFoodForm(food: Food): FoodForm {
         fat: food.fat.toString(),
         carbs: food.carbs.toString(),
         fiber: food.fiber ? food.fiber.toString() : '0',
+        salt: food.salt ? food.salt.toString() : '0',
     };
 }
 
@@ -76,10 +82,11 @@ export const FoodSchema = Yup.object().shape({
         .min(1)
         .max(50)
         .required(),
-    weight: Yup.number().required().min(0).max(1000).positive(),
-    kcal: Yup.number().required().min(0).max(1000),
-    protein: Yup.number().required().min(0).max(1000),
-    fat: Yup.number().required().min(0).max(1000),
-    carbs: Yup.number().required().min(0).max(1000),
-    fiber: Yup.number().min(0).max(1000),
+    weight: Yup.number().required().min(0).max(9999).positive(),
+    kcal: Yup.number().required().min(0).max(9999),
+    protein: Yup.number().required().min(0).max(9999),
+    fat: Yup.number().required().min(0).max(9999),
+    carbs: Yup.number().required().min(0).max(9999),
+    fiber: Yup.number().min(0).max(9999),
+    salt: Yup.number().min(0).max(9999),
 });

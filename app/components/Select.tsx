@@ -1,7 +1,8 @@
 import React, { PropsWithChildren, useMemo } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
-import { StyleSheet, useColorScheme, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { defaultOffset } from '../styles/variables.tsx';
+import { useAppSelector } from '../domain/hooks.ts';
 
 type Props = PropsWithChildren<{
     items: {heading: string; value: any}[];
@@ -21,14 +22,14 @@ export function Select({
         }));
     }, [items]);
 
-    const colorScheme = useColorScheme();
+    const theme = useAppSelector(state => state.settings.theme);
 
     const formStyles = StyleSheet.create({
         select: {
             height: 40,
             borderColor: 'gray',
             borderWidth: 1,
-            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff',
+            backgroundColor: theme === 'dark' ? '#000' : '#fff',
             borderRadius: 4,
             paddingHorizontal: defaultOffset / 2,
             justifyContent: 'center',
@@ -39,7 +40,7 @@ export function Select({
     return (
         <View style={formStyles.select}>
             <RNPickerSelect
-                darkTheme={colorScheme === 'dark'}
+                darkTheme={theme === 'dark'}
                 value={value}
                 onValueChange={onChange}
                 items={prepared}

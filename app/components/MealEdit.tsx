@@ -4,7 +4,7 @@ import { defaultMeal, MealForm, MealSchema, toMealForm } from '../domain/meal.ts
 import { formStyles } from '../styles/form.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
 import { FieldArray, Formik } from 'formik';
-import { findMealById, food, selection } from '../store.ts';
+import { findMealById, food, selection } from '../features/store.ts';
 import { Field } from './Field.tsx';
 import DatePicker from 'react-native-date-picker';
 import { addMeal, updateMeal } from '../features/mealSlice.tsx';

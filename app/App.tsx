@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
-import { persistor, store } from './store.ts';
+import { persistor, store } from './features/store.ts';
 import { PersistGate } from 'redux-persist/integration/react';
 import { MealList } from './components/MealList.tsx';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,15 +12,17 @@ import { RootStackParamList } from './routes.tsx';
 import { MealEdit } from './components/MealEdit.tsx';
 import { FoodList } from './components/FoodList.tsx';
 import { Stats } from './components/Stats.tsx';
+import { Settings } from './components/Settings.tsx';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App(): React.JSX.Element {
     return (
-        <SafeAreaView style={layoutStyles.container}>
-            <StatusBar />
-            <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
+        <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <SafeAreaView style={layoutStyles.container}>
+                    <StatusBar />
+
                     <NavigationContainer>
                         <Stack.Navigator initialRouteName={'MealList'}>
                             <Stack.Screen
@@ -48,11 +50,17 @@ function App(): React.JSX.Element {
                                 component={Stats}
                                 options={{headerShown: false}}
                             />
+                            <Stack.Screen
+                                name="Settings"
+                                component={Settings}
+                                options={{headerShown: false}}
+                            />
                         </Stack.Navigator>
                     </NavigationContainer>
-                </PersistGate>
-            </Provider>
-        </SafeAreaView>
+                </SafeAreaView>
+            </PersistGate>
+        </Provider>
+
     );
 }
 

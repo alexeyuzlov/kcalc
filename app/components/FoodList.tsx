@@ -9,10 +9,8 @@ import { typoStyles } from '../styles/typo.tsx';
 import { defaultOffset, primaryColor } from '../styles/variables.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
-import { addToSelection, removeFromSelection } from '../features/selectionSlice.tsx';
-import { FileImport } from './FileImport.tsx';
-import { FileExport } from './FileExport.tsx';
-import { food, meal, selection } from '../store.ts';
+import { addToSelection, removeFromSelection, setSelection } from '../features/selectionSlice.tsx';
+import { food, meal, selection } from '../features/store.ts';
 import { groupByUsing, mealGroups } from '../domain/meal-groups.ts';
 import { Container } from './Container.tsx';
 import { Input } from './Input.tsx';
@@ -61,6 +59,12 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
 
         return sortedFood.filter(f => f.name.toLowerCase().includes(text));
     }, [sortedFood, search]);
+
+    useEffect(() => {
+        if (!selectable) {
+            dispatch(setSelection([]));
+        }
+    }, []);
 
     useEffect(() => {
         setSearch('');
@@ -141,8 +145,11 @@ export function FoodList({navigation, route}: Props): React.JSX.Element {
                 <View style={layoutStyles.spacer} />
 
                 <View style={layoutStyles.row}>
-                    <FileImport />
-                    <FileExport />
+                    <Button
+                        color={primaryColor}
+                        title={'Settings'}
+                        onPress={() => navigation.navigate('Settings')}
+                    />
                 </View>
             </View>
         </Container>

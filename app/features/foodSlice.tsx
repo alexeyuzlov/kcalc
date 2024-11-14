@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Food } from '../domain/food.ts';
-import { generateId, ID } from '../domain/id.ts';
-import { RootState } from '../store.ts';
+import { ID } from '../domain/id.ts';
+import { RootState } from './store.ts';
 
 export interface FoodState {
     defaultName: string;
@@ -17,10 +17,9 @@ export const foodSlice = createSlice({
     name: 'food',
     initialState,
     reducers: {
-        addFood: (state: FoodState, action: PayloadAction<Omit<Food, 'id'>>) => {
+        addFood: (state: FoodState, action: PayloadAction<Food>) => {
             const item: Food = {
                 ...action.payload,
-                id: generateId(),
             };
 
             state.items = [item, ...state.items];

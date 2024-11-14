@@ -13,6 +13,8 @@ import { RootStackParamList } from '../routes.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Container } from './Container.tsx';
 import { Input } from './Input.tsx';
+import { setSelection } from '../features/selectionSlice.tsx';
+import { generateId } from '../domain/id.ts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'FoodEdit'>;
 
@@ -28,6 +30,8 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
         return exist ? toFoodForm(exist) : defaultFood(defaultName);
     }, [defaultName, exist]);
 
+    const selection = useAppSelector(state => state.selection.items);
+
     const submitForm = (values: FoodForm) => {
         // console.info('Food', values);
 
@@ -37,7 +41,17 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
         if (food.id) {
             dispatch(updateFood({id: food.id, body: foodEdit}));
         } else {
-            dispatch(addFood(foodEdit));
+            const newId = generateId();
+
+            dispatch(addFood({
+                ...foodEdit,
+                id: newId,
+            }));
+
+            dispatch(setSelection([
+                ...selection,
+                newId,
+            ]));
         }
 
         navigation.goBack();
@@ -128,6 +142,17 @@ export function FoodEdit({navigation, route}: Props): React.JSX.Element {
                                     value={values.fiber}
                                     onChangeText={handleChange('fiber')}
                                     onBlur={handleBlur('fiber')}
+                                    placeholder={'0'}
+                                />
+                            </Field>
+
+                            <Field label={'Salt'} name={'salt'}>
+                                <Input
+                                    inputMode={'numeric'}
+                                    maxLength={7}
+                                    value={values.salt}
+                                    onChangeText={handleChange('salt')}
+                                    onBlur={handleBlur('salt')}
                                     placeholder={'0'}
                                 />
                             </Field>

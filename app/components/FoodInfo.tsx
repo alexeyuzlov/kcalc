@@ -10,22 +10,31 @@ type Props = PropsWithChildren<{
 
 export function FoodInfo({item}: Props): React.JSX.Element {
     return (
-        <View style={{...layoutStyles.row, gap: 4}}>
-            <Number value={item.protein} />
-            <Text>/</Text>
-            <Number value={item.fat} />
-            <Text>/</Text>
-            <Number value={item.carbs} />
+        <View>
+            <View style={{...layoutStyles.row, gap: 4}}>
+                <Number value={item.protein} />
+                <Text>/</Text>
+                <Number value={item.fat} />
+                <Text>/</Text>
+                <Number value={item.carbs} />
 
-            <View style={{...layoutStyles.row, gap: 0}}>
-                <Text>(</Text>
-                <Number value={item.fiber || 0} />
-                <Text>)</Text>
+                <View style={layoutStyles.spacer}/>
+
+                <Number value={item.weight}>grams</Number>
             </View>
 
-            <View style={layoutStyles.spacer}></View>
+            <View style={{...layoutStyles.row, gap: 0}}>
+                <Text>Fiber: </Text>
+                <Number value={item.fiber || 0} />
 
-            <Number value={item.weight}>grams</Number>
+                <Text> / </Text>
+
+                <Text>Salt: </Text>
+                <Number value={item.salt || 0} />
+
+                <View style={layoutStyles.spacer}/>
+            </View>
         </View>
+
     );
 }

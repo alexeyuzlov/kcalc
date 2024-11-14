@@ -1,7 +1,7 @@
 import { Button } from 'react-native';
 import React, { PropsWithChildren } from 'react';
 import { useAppSelector } from '../domain/hooks.ts';
-import { food, meal } from '../store.ts';
+import { food, meal } from '../features/store.ts';
 import Share from 'react-native-share';
 import { printDate } from '../domain/date.ts';
 import { PATH_TO_INTERNAL_FILE, saveInternalFile } from '../domain/file.ts';

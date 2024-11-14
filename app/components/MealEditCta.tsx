@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes.tsx';
 import { setSelection } from '../features/selectionSlice.tsx';
 import { useAppDispatch, useAppSelector } from '../domain/hooks.ts';
-import { meal } from '../store.ts';
+import { meal } from '../features/store.ts';
 import { primaryColor } from '../styles/variables.tsx';
 
 type Props = PropsWithChildren<{

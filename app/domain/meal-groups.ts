@@ -59,6 +59,13 @@ export function mealGroups(
 export function groupByUsing(groups: MealGroup[], foodState: Food[]): Record<ID, Food & {totalUse: number}> {
     const products: Record<ID, Food & {totalUse: number}> = {};
 
+    foodState.forEach(food => {
+        products[food.id] = {
+            ...food,
+            totalUse: 0,
+        };
+    });
+
     groups.forEach(group => {
         group.data.forEach(meal => {
             meal.items.forEach(item => {
@@ -67,25 +74,9 @@ export function groupByUsing(groups: MealGroup[], foodState: Food[]): Record<ID,
                     return;
                 }
 
-                if (!products[food.id]) {
-                    products[food.id] = {
-                        ...food,
-                        totalUse: 0,
-                    };
-                }
-
                 products[food.id].totalUse++;
             });
         });
-    });
-
-    foodState.forEach(food => {
-        if (!products[food.id]) {
-            products[food.id] = {
-                ...food,
-                totalUse: 0,
-            };
-        }
     });
 
     return products;
