@@ -70,7 +70,7 @@ export function Stats({navigation, route}: Props): React.JSX.Element {
 
     const averagePerLastNDays = useMemo(() => {
         const totalDays = 30;
-        const lastNDays = groups.slice(-totalDays);
+        const lastNDays = groups.slice(0, totalDays);
         return average('Average (last 30 days)', lastNDays);
     }, [groups]);
 
